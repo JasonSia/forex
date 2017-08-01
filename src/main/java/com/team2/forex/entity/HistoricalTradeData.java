@@ -1,6 +1,6 @@
 package com.team2.forex.entity;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public class HistoricalTradeData {
 	private int historicalTradeDataId;
@@ -8,11 +8,11 @@ public class HistoricalTradeData {
 	private Currency sell;
 	private double price;
 	private int lotSize;
-	private Date timestamp;
+	private Timestamp timestamp;
 	
 	public HistoricalTradeData() {}
 
-	public HistoricalTradeData(Currency buy, Currency sell, double price, int lotSize, Date timestamp) {
+	public HistoricalTradeData(Currency buy, Currency sell, double price, int lotSize, Timestamp timestamp) {
 		this.buy = buy;
 		this.sell = sell;
 		this.price = price;
@@ -21,7 +21,7 @@ public class HistoricalTradeData {
 	}
 
 	public HistoricalTradeData(int historicalTradeDataId, Currency buy, Currency sell, double price, int lotSize,
-			Date timestamp) {
+			Timestamp timestamp) {
 		this.historicalTradeDataId = historicalTradeDataId;
 		this.buy = buy;
 		this.sell = sell;
@@ -70,11 +70,11 @@ public class HistoricalTradeData {
 		this.lotSize = lotSize;
 	}
 
-	public Date getTimestamp() {
+	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(Date timestamp) {
+	public void setTimestamp(Timestamp timestamp) {
 		this.timestamp = timestamp;
 	}
 }
