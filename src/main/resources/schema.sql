@@ -5,7 +5,7 @@ drop table historical if exists;
 drop table historicalAudit if exists;
 
 CREATE TABLE users(
-	userid varchar (255) NOT NULL, 
+	userId varchar (255) NOT NULL, 
 	password varchar (255) NOT NULL,
 	PRIMARY KEY (userid)
 );
@@ -40,14 +40,14 @@ CREATE TABLE orderAudit(
 	submittedTime timestamp NOT NULL, 
 	executedTime timestamp NOT NULL,
 	userid varchar (255) NOT NULL,
-	modifiedTime timestamp NOT NULL
+	modifiedTime timestamp NOT NULL,
 	PRIMARY KEY (recordId)
 );
 
 CREATE TABLE historical(
 	historicalId int (10) NOT NULL AUTO_INCREMENT, 
-	currencyBuy (3) NOT NULL, 
-	currencySell (3) NOT NULL,
+	currencyBuy varchar(3) NOT NULL, 
+	currencySell varchar(3) NOT NULL,
 	lastPrice double,
 	PRIMARY KEY (historicalId)
 );
