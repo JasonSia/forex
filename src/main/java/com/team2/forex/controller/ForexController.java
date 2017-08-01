@@ -20,6 +20,9 @@ public class ForexController {
 	@Autowired
 	private ForexStreamEmulationService emulationService;
 	
+	//@Autowired
+	//ForexDataReaderService fdrs;
+
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE})
 	public String welcome(Order userOrder){
 		return mos.placeMarketOrder(userOrder);
@@ -27,9 +30,9 @@ public class ForexController {
 	
 	/*@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public User createUser(@RequestBody User user){
-		repo.create(user);
-		return user;
+	public String importFile(@RequestBody String fileName){
+		fdrs.parseCSV(fileName);
+		return "done";
 	}*/
 
 	@Scheduled(fixedRate=60000)
