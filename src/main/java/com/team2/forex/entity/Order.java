@@ -19,8 +19,8 @@ public class Order {
 	
 	public Order(){}
 	
-	//initialising a new market order object here
-	public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size, Timestamp submittedTime, String userId){
+	//initialising a new market order object here -- edit: not req since POSTMAN POST creates object directly
+	/*public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size, Timestamp submittedTime, String userId){
 		this.orderId=orderId;
 		this.orderType=orderType;
 		this.currencyBuy=currencyBuy;
@@ -28,9 +28,7 @@ public class Order {
 		this.size=size;
 		this.submittedTime=submittedTime;
 		this.userId=userId;
-	}
-	
-	//to do: initialise a new limit order object
+	}*/
 	
 	public int getOrderId() {
 		return orderId;
