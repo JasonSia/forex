@@ -15,8 +15,6 @@ public class ForexController {
 
 	@Autowired
 	MarketOrderService mos;
-	@Autowired
-	MarketOrderRepository marketOrderRp;
 	
 	@RequestMapping("/placeMarketOrder")
 	public String welcome(){
