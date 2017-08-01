@@ -54,9 +54,9 @@ CREATE TABLE historical(
 
 CREATE TABLE historicalAudit(
 	historicalAuditId int NOT NULL AUTO_INCREMENT,
-	filename varchar (255) NOT NULL, 
+	filename varchar(255) NOT NULL, 
 	processingTime double,
-	PRIMARY KEY (historicalAudit)
+	PRIMARY KEY (historicalAuditId)
 ); 
 
 
