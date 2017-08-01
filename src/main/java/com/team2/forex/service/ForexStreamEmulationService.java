@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ForexStreamEmulationService {
-	public void pr(){
+	public void processStreamJson(String streamJson){
 		
 	}
 	
