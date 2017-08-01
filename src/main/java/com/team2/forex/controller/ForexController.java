@@ -16,17 +16,19 @@ public class ForexController {
 	@Autowired
 	MarketOrderService mos;
 	
+	//@Autowired
+	//ForexDataReaderService fdrs;
+	
 	@RequestMapping("/placeMarketOrder")
 	public String welcome(){
-		//return fs.;
 		return null;
 	}
 	
 	/*@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public User createUser(@RequestBody User user){
-		repo.create(user);
-		return user;
+	public String importFile(@RequestBody String fileName){
+		fdrs.parseCSV(fileName);
+		return "done";
 	}*/
 
 	
