@@ -1,5 +1,5 @@
 package com.team2.forex.repository;
 
-public class ForexRepository {
+public class MarketOrderRepository {
 
 }
