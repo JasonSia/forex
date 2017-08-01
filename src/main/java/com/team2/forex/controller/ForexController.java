@@ -1,5 +1,8 @@
 package com.team2.forex.controller;
 
+import java.util.Date;
+
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,10 +38,20 @@ public class ForexController {
 		return "done";
 	}
 
-	@Scheduled(fixedRate=60000)
+	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")
 	@RequestMapping(value="/runStreamEmulation")
 	public void runStreamEmulation(){
-		String streamJson = ForexStreamEmulationService.generateStreamJson();
+		//System.out.println("Running emulation" + new Date());
+		
+		try {
+			String streamJson = emulationService.generateStreamJson();
+			//System.out.println(streamJson);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 	
 }
