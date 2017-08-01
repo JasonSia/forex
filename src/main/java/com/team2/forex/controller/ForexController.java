@@ -17,20 +17,20 @@ public class ForexController {
 	@Autowired
 	MarketOrderService mos;
 	
-	//@Autowired
-	//ForexDataReaderService fdrs;
+	@Autowired
+	ForexDataReaderService fdrs;
 
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE})
 	public String welcome(Order userOrder){
 		return mos.placeMarketOrder(userOrder);
 	}
 	
-	/*@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
+	@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
 			consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String importFile(@RequestBody String fileName){
 		fdrs.parseCSV(fileName);
 		return "done";
-	}*/
+	}
 
 	
 }
