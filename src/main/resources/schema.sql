@@ -57,7 +57,7 @@ CREATE TABLE historicalAudit(
 	filename varchar (255) NOT NULL, 
 	processingTime double,
 	PRIMARY KEY (historicalAudit)
-);
+); 
 
 
 
