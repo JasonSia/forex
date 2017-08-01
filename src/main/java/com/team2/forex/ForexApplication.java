@@ -1,4 +1,4 @@
-package com.forex.team2.forex;
+package com.team2.forex;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
