@@ -104,9 +104,11 @@ public class ForexController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+	}
+	
+	@RequestMapping("/helloworld")
+	public String helloWorld(){
+		return "helloworld";
 	}
 	
 }
