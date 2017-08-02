@@ -49,6 +49,8 @@ CREATE TABLE historical(
 	currencyBuy varchar(3) NOT NULL, 
 	currencySell varchar(3) NOT NULL,
 	lastPrice double,
+	lotSize int,
+	transactionTime timestamp,
 	PRIMARY KEY (historicalId)
 );
 
