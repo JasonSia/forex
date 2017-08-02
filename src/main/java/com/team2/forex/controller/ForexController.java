@@ -1,9 +1,5 @@
 package com.team2.forex.controller;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
