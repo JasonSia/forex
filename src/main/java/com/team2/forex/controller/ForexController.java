@@ -5,11 +5,16 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
+
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,11 +37,15 @@ public class ForexController {
 	private ForexStreamEmulationService emulationService;
 	
 	@Autowired
-	ForexDataReaderService fdrs;
+	private ForexDataReaderService fdrs;
+	
+	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
-	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
+	
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String createMarketOrder(@RequestBody Order userOrder){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
 		int flagBuy=0;
 		int flagSell=0;
 		for(Currency c: Currency.values()){
@@ -49,10 +58,10 @@ public class ForexController {
 			return "OrderType should only be Market or Limit";
 		}
 		else if(flagBuy!=1)
-		{   return "Buy Currency not supported.";	
+		{   return "ERROR: Buy Currency not supported.";	
 		}
 		else if(flagSell!=1)
-		{   return "Sell Currency not supported.";	
+		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
 		{
@@ -72,6 +81,40 @@ public class ForexController {
 		}
 		else
 		   return "Your input size is more than the lot size currently available, please try again.";
+	}
+		}
+	
+	
+	@RequestMapping(value="/placeLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String createLimitOrder(@RequestBody Order userOrder){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
+		int flagBuy=0;
+		int flagSell=0;
+		for(Currency c: Currency.values()){
+			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+				flagBuy=1;
+			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+				flagSell=1;
+		}
+		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
+			return "ERROR: OrderType should only be BUY or SELL";
+		}
+		else if(flagBuy!=1)
+		{   return "ERROR: Buy Currency not supported.";	
+		}
+		else if(flagSell!=1)
+		{   return "ERROR: Sell Currency not supported.";	
+		}
+		else
+		{
+		userOrder.setStatus(Status.NOTFILLED);
+		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
+		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		userOrder.setUserId(userid);
+		//userOrder.setPreferredPrice(userid);
+		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
 		}
 	}
 	
@@ -106,7 +149,8 @@ public class ForexController {
 			List<HistoricalTradeData> dataList = emulationService.parseStreamJson(streamJson);
 			emulationService.saveHistoricalTradeData(dataList);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			LOGGER.info("Malformed Stream Message: " + e.getMessage());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
