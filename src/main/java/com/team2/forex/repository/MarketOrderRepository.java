@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.team2.forex.entity.Order;
 import com.team2.forex.repository.MarketOrderRepository;
 
-@Component
+//@Component
+@Repository
 public class MarketOrderRepository {
 	
     private final static Logger logger = LoggerFactory.getLogger(MarketOrderRepository.class);
@@ -27,7 +29,7 @@ public class MarketOrderRepository {
     		  	order.getOrderType(), order.getCurrencyBuy(), order.getCurrencySell(), order.getSize(), null, null, order.getStatus(), null, 
     		  	order.getSubmittedTime(), null, order.getUserId()
     		  	);
-    return order.getOrderType();    
+      return order.getOrderType();
     }
     
     

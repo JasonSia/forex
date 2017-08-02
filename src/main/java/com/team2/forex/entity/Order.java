@@ -6,8 +6,8 @@ public class Order {
 
 	private int orderId;
 	private String orderType;
-	private Currency currencyBuy;
-	private Currency currencySell;
+	private String currencyBuy;
+	private String currencySell;
 	private int size;
 	private double preferredPrice;
 	private double executedPrice;
@@ -42,16 +42,16 @@ public class Order {
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
 	}
-	public Currency getCurrencyBuy() {
+	public String getCurrencyBuy() {
 		return currencyBuy;
 	}
-	public void setCurrencyBuy(Currency currencyBuy) {
+	public void setCurrencyBuy(String currencyBuy) {
 		this.currencyBuy = currencyBuy;
 	}
-	public Currency getCurrencySell() {
+	public String getCurrencySell() {
 		return currencySell;
 	}
-	public void setCurrencySell(Currency currencySell) {
+	public void setCurrencySell(String currencySell) {
 		this.currencySell = currencySell;
 	}
 	public int getSize() {

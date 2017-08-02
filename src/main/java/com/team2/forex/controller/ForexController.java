@@ -26,9 +26,11 @@ public class ForexController {
 	@Autowired
 	ForexDataReaderService fdrs;
 
-	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE})
-	public String welcome(Order userOrder){
+	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
+	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String welcome(@RequestBody Order userOrder){
 		return mos.placeMarketOrder(userOrder);
+		  
 	}
 	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
