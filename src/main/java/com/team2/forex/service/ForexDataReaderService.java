@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.team2.forex.entity.*;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
+import com.team2.forex.repository.implementation.HistoricalAuditDataRepositoryImpl;
 import com.team2.forex.repository.implementation.HistoricalTradeDataRepositoryImpl;
 import com.team2.forex.util.DataFormatCheckUtil;
 import com.team2.forex.util.DateTimeUtil;
@@ -21,25 +22,37 @@ public class ForexDataReaderService {
 	@Autowired
 	private HistoricalTradeDataRepository histRepo;
 	
+	@Autowired
+	private HistoricalAuditDataRepositoryImpl auditRepo;
+	
 	public void parseCSV() throws ParseException {
 		// TODO Auto-generated method stub
 		String fileName = "/home/java/git/forex/src/main/resources/HistoricalTradeData.csv";
 		BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
-
+        int count=0;
+        int countInFile = 0;
         try {
 
             br = new BufferedReader(new FileReader(fileName));
             while ((line = br.readLine()) != null) {
                 // use comma as separator
-            	
+            	count+=1;
             	Currency buy = Currency.SGD, sell = Currency.EUR;
                 String[] data = line.split(cvsSplitBy);
+                
+                long startTime = System.currentTimeMillis();
+                
                 boolean isMalformed = DataFormatCheckUtil.checkData(data);
                 
+                long endTime = System.currentTimeMillis();
+                
                 if(isMalformed){
+                	countInFile+=1;
                 	System.out.println("isMalformed");
+                	HistoricalAudit histAudit = auditRepo.createHistoricalAuditData(new HistoricalAudit(countInFile, count, fileName, endTime-startTime)); 
+              
                 } else {
                 	System.out.println("isNotMalformed");
                 	String[] cur = data[0].split("/");
