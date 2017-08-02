@@ -52,9 +52,9 @@ public class ForexController {
 		int flagBuy=0;
 		int flagSell=0;
 		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
 				flagBuy=1;
-			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
 				flagSell=1;
 		}
 		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
@@ -70,8 +70,9 @@ public class ForexController {
 		{
 		userOrder.setStatus(Status.NOTFILLED);
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
-		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
-		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		userOrder.setUserId(userid);
+		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		//userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		Order completedOrder=mos.placeMarketOrder(userOrder);
 		if(completedOrder!=null){
 			String toPrint="Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
@@ -95,13 +96,13 @@ public class ForexController {
 		int flagBuy=0;
 		int flagSell=0;
 		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
 				flagBuy=1;
-			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
 				flagSell=1;
 		}
-		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
-			return "ERROR: OrderType should only be BUY or SELL";
+		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
+			return "ERROR: OrderType should only be Market or Limit";
 		}
 		else if(flagBuy!=1)
 		{   return "ERROR: Buy Currency not supported.";	
@@ -113,8 +114,8 @@ public class ForexController {
 		{
 		userOrder.setStatus(Status.NOTFILLED);
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
-		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
-		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		//userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		userOrder.setUserId(userid);
 		//userOrder.setPreferredPrice(userid);
 		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+los.placeLimitOrder(userOrder);
