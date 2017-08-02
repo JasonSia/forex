@@ -13,7 +13,8 @@ public class MarketOrderService {
 	MarketOrderRepository marketOrderRp;
 	
 	public String placeMarketOrder(Order mktOrder){
-		return null;
+		return marketOrderRp.PlaceMarketOrder(mktOrder);
+		
 	}
 	
 }

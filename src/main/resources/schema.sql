@@ -17,11 +17,11 @@ CREATE TABLE orderList(
 	currencySell varchar(3) NOT NULL,
 	size int NOT NULL,
 	preferredPrice double,
-	executedPrice double NOT NULL,
+	executedPrice double,
 	status varchar (10) NOT NULL,
-	goodTillDate timestamp NOT NULL,
+	goodTillDate timestamp,
 	submittedTime timestamp NOT NULL, 
-	executedTime timestamp NOT NULL,
+	executedTime timestamp,
 	userid varchar (255) NOT NULL,
 	PRIMARY KEY (orderId)
 );
