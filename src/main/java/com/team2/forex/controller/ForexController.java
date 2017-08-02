@@ -1,5 +1,6 @@
 package com.team2.forex.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -61,8 +62,11 @@ public class ForexController {
 			
 			//parse and process json
 			List<HistoricalTradeData> dataList = emulationService.parseStreamJson(streamJson);
-			emulationService.processStreamList(dataList);
+			emulationService.saveHistoricalTradeData(dataList);
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

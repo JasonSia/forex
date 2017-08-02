@@ -3,6 +3,7 @@ package com.team2.forex;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import org.json.JSONException;
@@ -31,7 +32,7 @@ public class StreamEmulationEngineTest {
 	private final double DELTA = 1e-15;
 	
 	@Test
-	public void testParseStreamJson(){
+	public void testParseStreamJson() throws ParseException{
 		try {
 			//get stream json
 			String streamJson = emulationService.generateStreamJson();
@@ -49,7 +50,7 @@ public class StreamEmulationEngineTest {
 	}
 	
 	@Test(expected=IOException.class)
-	public void testParseIncorrectStreamJson(){
+	public void testParseIncorrectStreamJson() throws ParseException{
 		try {
 			//get stream json
 			String streamJson = emulationService.generateIncorrectStreamJson();
@@ -62,7 +63,7 @@ public class StreamEmulationEngineTest {
 	}
 
 	@Test
-	public void testStreamEmulation(){
+	public void testStreamEmulation() throws ParseException{
 		try {
 			//get stream json
 			String streamJson = emulationService.generateStreamJson();
@@ -71,7 +72,7 @@ public class StreamEmulationEngineTest {
 			List<HistoricalTradeData> historicalTradeDataList = emulationService.parseStreamJson(streamJson);
 			
 			//process stream list into db
-			emulationService.processStreamList(historicalTradeDataList);
+			emulationService.saveHistoricalTradeData(historicalTradeDataList);
 			
 			//check if list is correctly inserted into db
 			for(HistoricalTradeData historicalTradeData : historicalTradeDataList){
