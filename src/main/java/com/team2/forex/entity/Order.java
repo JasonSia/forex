@@ -6,17 +6,35 @@ public class Order {
 
 	private int orderId;
 	private String orderType;
-	private String currencyBuy;
-	private String currencySell;
+	private Currency currencyBuy;
+	private Currency currencySell;
 	private int size;
 	private double preferredPrice;
 	private double executedPrice;
-	private String status;
+	private Status status;
 	private Timestamp goodTillDate;
 	private Timestamp submittedTime; 
 	private Timestamp executedTime;
 	private String userId;
+	private String currencyBuyInput;
+	private String currencySellInput;
 	
+	public String getCurrencyBuyInput() {
+		return currencyBuyInput;
+	}
+
+	public void setCurrencyBuyInput(String currencyBuyInput) {
+		this.currencyBuyInput = currencyBuyInput;
+	}
+
+	public String getCurrencySellInput() {
+		return currencySellInput;
+	}
+
+	public void setCurrencySellInput(String currencySellInput) {
+		this.currencySellInput = currencySellInput;
+	}
+
 	public Order(){}
 	
 	//initialising a new market order object here -- edit: not req since POSTMAN POST creates object directly
@@ -42,7 +60,20 @@ public class Order {
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
 	}
-	public String getCurrencyBuy() {
+	public Currency getCurrencyBuy() {
+		return currencyBuy;
+	}
+	public void setCurrencyBuy(Currency currencyBuy) {
+		this.currencyBuy = currencyBuy;
+	}
+	public Currency getCurrencySell() {
+		return currencySell;
+	}
+	public void setCurrencySell(Currency currencySell) {
+		this.currencySell = currencySell;
+	}
+	
+	/*public String getCurrencyBuy() {
 		return currencyBuy;
 	}
 	public void setCurrencyBuy(String currencyBuy) {
@@ -53,7 +84,7 @@ public class Order {
 	}
 	public void setCurrencySell(String currencySell) {
 		this.currencySell = currencySell;
-	}
+	}*/
 	public int getSize() {
 		return size;
 	}
@@ -72,10 +103,10 @@ public class Order {
 	public void setExecutedPrice(double executedPrice) {
 		this.executedPrice = executedPrice;
 	}
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	public Timestamp getGoodTillDate() {

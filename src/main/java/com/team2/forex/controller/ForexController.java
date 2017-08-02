@@ -1,5 +1,9 @@
 package com.team2.forex.controller;
 
+<<<<<<< HEAD
+=======
+import java.sql.Timestamp;
+>>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -16,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.team2.forex.service.*;
+import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
+import com.team2.forex.entity.Status;
 
 @RestController
 public class ForexController {
@@ -33,9 +39,32 @@ public class ForexController {
 
 	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String welcome(@RequestBody Order userOrder){
-		return mos.placeMarketOrder(userOrder);
-		  
+	public String createMarketOrder(@RequestBody Order userOrder){
+		int flagBuy=0;
+		int flagSell=0;
+		for(Currency c: Currency.values()){
+			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+				flagBuy=1;
+			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+				flagSell=1;
+		}
+		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
+			return "OrderType should only be BUY or SELL";
+		}
+		else if(flagBuy!=1)
+		{   return "Buy Currency not supported.";	
+		}
+		else if(flagSell!=1)
+		{   return "Sell Currency not supported.";	
+		}
+		else
+		{
+		userOrder.setStatus(Status.NOTFILLED);
+		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
+		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		return "Your order's unique ID is: "+mos.placeMarketOrder(userOrder);
+		}
 	}
 	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
@@ -67,8 +96,11 @@ public class ForexController {
 			
 			//parse and process json
 			List<HistoricalTradeData> dataList = emulationService.parseStreamJson(streamJson);
-			emulationService.processStreamList(dataList);
+			emulationService.saveHistoricalTradeData(dataList);
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
