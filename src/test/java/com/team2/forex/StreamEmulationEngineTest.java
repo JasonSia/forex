@@ -42,24 +42,20 @@ public class StreamEmulationEngineTest {
 			
 			//check list size
 			int numCurrencies = Currency.values().length;
-			int numCurrencyPair = calculateFactorial(numCurrencies);
+			int numCurrencyPair = numCurrencies * (numCurrencies - 1);
 			assertEquals("Number of items in list should be " + numCurrencyPair, numCurrencyPair, myObjects.size());
 		} catch (JSONException e) {
 			Assert.fail("Could not create stream json");
 		}
 	}
 	
-	@Test(expected=IOException.class)
-	public void testParseIncorrectStreamJson() throws ParseException{
-		try {
-			//get stream json
-			String streamJson = emulationService.generateIncorrectStreamJson();
-			
-			//map json into HistoricalTradeData list
-			List<HistoricalTradeData> myObjects = emulationService.parseStreamJson(streamJson);
-		} catch (JSONException e) {
-			Assert.fail("Could not create stream json");
-		}
+	@Test(expected=JSONException.class)
+	public void testParseIncorrectStreamJson() throws JSONException, ParseException{
+		//get stream json
+		String streamJson = emulationService.generateIncorrectStreamJson();
+		
+		//map json into HistoricalTradeData list
+		List<HistoricalTradeData> myObjects = emulationService.parseStreamJson(streamJson);
 	}
 
 	@Test
@@ -87,11 +83,6 @@ public class StreamEmulationEngineTest {
 		} catch (JSONException e) {
 			Assert.fail("Could not create stream json");
 		}
-	}
-	
-	private int calculateFactorial(int num){
-		if(num == 1) return num;
-		return calculateFactorial(num - 1) * num;
 	}
 	
 }
