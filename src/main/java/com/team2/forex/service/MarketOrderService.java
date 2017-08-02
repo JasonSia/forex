@@ -11,7 +11,7 @@ public class MarketOrderService {
 	@Autowired
 	MarketOrderRepository marketOrderRp;
 	
-	public String placeMarketOrder(Order mktOrder){
+	public int placeMarketOrder(Order mktOrder){
 		return marketOrderRp.PlaceMarketOrder(mktOrder);
 		
 	}
