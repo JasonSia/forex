@@ -50,7 +50,7 @@ public class PlaceCancelOrderTests {
 	
 	
 	@Test
-    public void aCarGoesIntoTheGarage() throws JSONException {
+    public void PlaceMarketOrderSuccess() throws JSONException {
 		JSONObject Order = new JSONObject();
 		Order.put("orderType", "BUY");
         Order.put("currencyBuyInput", "HKD");

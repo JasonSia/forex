@@ -38,7 +38,7 @@ public class ForexController {
 	@Autowired
 	ForexDataReaderService fdrs;
 
-	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
+	
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String createMarketOrder(@RequestBody Order userOrder){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -67,7 +67,41 @@ public class ForexController {
 		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
 		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		userOrder.setUserId(userid);
-		return "SUCCESSFUL: Your order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
+		return "SUCCESSFUL: Your market order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
+		}
+	}
+	
+	
+	@RequestMapping(value="/placeLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String createLimitOrder(@RequestBody Order userOrder){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
+		int flagBuy=0;
+		int flagSell=0;
+		for(Currency c: Currency.values()){
+			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+				flagBuy=1;
+			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+				flagSell=1;
+		}
+		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
+			return "ERROR: OrderType should only be BUY or SELL";
+		}
+		else if(flagBuy!=1)
+		{   return "ERROR: Buy Currency not supported.";	
+		}
+		else if(flagSell!=1)
+		{   return "ERROR: Sell Currency not supported.";	
+		}
+		else
+		{
+		userOrder.setStatus(Status.NOTFILLED);
+		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
+		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		userOrder.setUserId(userid);
+		//userOrder.setPreferredPrice(userid);
+		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
 		}
 	}
 	
