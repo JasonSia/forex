@@ -1,5 +1,6 @@
 package com.team2.forex.controller;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -39,7 +40,12 @@ public class ForexController {
 	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
-		fdrs.parseCSV();
+		try {
+			fdrs.parseCSV();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "done";
 	}
 

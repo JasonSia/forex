@@ -1,17 +1,29 @@
 package com.team2.forex.service;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.ParseException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import com.team2.forex.entity.*;
+import com.team2.forex.repository.HistoricalTradeDataRepository;
+import com.team2.forex.repository.implementation.HistoricalTradeDataRepositoryImpl;
+import com.team2.forex.util.DataFormatCheckUtil;
+import com.team2.forex.util.DateTimeUtil;
 @Service
 public class ForexDataReaderService {
 
-	public void parseCSV(String fileName) {
+	@Autowired
+	private HistoricalTradeDataRepository histRepo;
+	
+	public void parseCSV() throws ParseException {
 		// TODO Auto-generated method stub
-		fileName = "/forex/src/main/resources/"+fileName;
+		String fileName = "/home/java/git/forex/src/main/resources/HistoricalTradeData.csv";
 		BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
@@ -20,12 +32,28 @@ public class ForexDataReaderService {
 
             br = new BufferedReader(new FileReader(fileName));
             while ((line = br.readLine()) != null) {
-
                 // use comma as separator
-                String[] country = line.split(cvsSplitBy);
-
-                System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
-
+            	
+            	Currency buy = Currency.SGD, sell = Currency.EUR;
+                String[] data = line.split(cvsSplitBy);
+                boolean isMalformed = DataFormatCheckUtil.checkData(data);
+                
+                if(isMalformed){
+                	System.out.println("isMalformed");
+                } else {
+                	System.out.println("isNotMalformed");
+                	String[] cur = data[0].split("/");
+                    for (Currency c : Currency.values()) {
+                    	  if(c.name().equals(cur[0])){
+                    		  sell = c;
+                    	  } else if(c.name().equals(cur[1])){
+                    		  buy = c;
+                    	  }
+                    }
+                    Timestamp t = DateTimeUtil.stringToTimestamp(data[3]);
+                    HistoricalTradeData histData = histRepo.createHistoricalTradeData(new HistoricalTradeData(sell, buy, Double.parseDouble(data[1]), Integer.parseInt(data[2]), t)); 
+                    
+                }
             }
 
         } catch (FileNotFoundException e) {

@@ -22,6 +22,7 @@ import com.team2.forex.repository.HistoricalTradeDataRepository;
 
 @Repository
 public class HistoricalTradeDataRepositoryImpl implements HistoricalTradeDataRepository {
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -41,9 +42,12 @@ public class HistoricalTradeDataRepositoryImpl implements HistoricalTradeDataRep
 	public HistoricalTradeData createHistoricalTradeData(HistoricalTradeData historicalTradeData) {
 		final String sql = "insert into historical(currencyBuy, currencySell, lastPrice, lotSize, transactionTime) values (?,?,?,?,?)";
 		KeyHolder holder = new GeneratedKeyHolder();
+		
 		jdbcTemplate.update(new PreparedStatementCreator(){
+			
 			@Override
 			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException{
+				
 				PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 				ps.setString(1, historicalTradeData.getBuy().name());
 				ps.setString(2, historicalTradeData.getSell().name());
