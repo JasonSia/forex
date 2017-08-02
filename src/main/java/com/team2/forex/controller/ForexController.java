@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,9 @@ public class ForexController {
 	private ForexStreamEmulationService emulationService;
 	
 	@Autowired
-	ForexDataReaderService fdrs;
+	private ForexDataReaderService fdrs;
+	
+	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
@@ -95,7 +98,8 @@ public class ForexController {
 			List<HistoricalTradeData> dataList = emulationService.parseStreamJson(streamJson);
 			emulationService.saveHistoricalTradeData(dataList);
 		} catch (JSONException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			LOGGER.info("Malformed Stream Message: " + e.getMessage());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
