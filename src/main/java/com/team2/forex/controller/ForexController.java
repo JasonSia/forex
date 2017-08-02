@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.team2.forex.service.*;
 import com.team2.forex.entity.Order;
@@ -31,10 +32,9 @@ public class ForexController {
 		return mos.placeMarketOrder(userOrder);
 	}
 	
-	@RequestMapping(value="/importDatafile", method=RequestMethod.POST,
-			consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String importFile(@RequestBody String fileName){
-		fdrs.parseCSV(fileName);
+	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
+	public String importFile(){
+		fdrs.parseCSV();
 		return "done";
 	}
 
