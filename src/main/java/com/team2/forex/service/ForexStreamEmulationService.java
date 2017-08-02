@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
+import com.team2.forex.util.DataFormatCheckUtil;
 import com.team2.forex.util.DateTimeUtil;
 
 @Service
@@ -78,6 +79,10 @@ public class ForexStreamEmulationService {
 					int plusMinus = random.nextInt(2);
 					if(plusMinus == 0){
 						price = historicalTradeData.getPrice() - random.nextInt(101);
+						
+						if(price < 0){
+							price = historicalTradeData.getPrice();
+						}
 					}else{
 						price = historicalTradeData.getPrice() + random.nextInt(101);
 					}
@@ -129,6 +134,10 @@ public class ForexStreamEmulationService {
 						price = historicalTradeData.getPrice() - random.nextInt(101);
 					}else{
 						price = historicalTradeData.getPrice() + random.nextInt(101);
+					}
+					
+					if(price < 0){
+						price = historicalTradeData.getPrice();
 					}
 					
 				}catch(EmptyResultDataAccessException ex){

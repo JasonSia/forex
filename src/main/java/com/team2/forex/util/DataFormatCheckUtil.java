@@ -6,18 +6,19 @@ import com.team2.forex.entity.Currency;
 
 public class DataFormatCheckUtil {
 	
-	public static boolean checkData(String [] csvData){
+	public static boolean checkData(String [] csvData){		
+		
 		if(!hasCorrectBuySellFormat(csvData[0])){
-			System.out.println("buy sell");
+			//System.out.println("buy sell");			
 			return true;
 		}else if(!hasPriceInDouble(csvData[1])){
-			System.out.println("price");
+			//System.out.println("price");
 			return true;
 		}else if(!hasLotSizeInInt(csvData[2])){
-			System.out.println("size");
+			//System.out.println("size");
 			return true;
 		}else if(!hasCorrectTimeStampFormat(csvData[3])){
-			System.out.println("time");
+			//System.out.println("time");
 			return true;
 		}
 		return false;
@@ -33,6 +34,7 @@ public class DataFormatCheckUtil {
 			System.out.println("wrong time");
 			return false;
 		}
+		
 	}
 
 	private static boolean hasLotSizeInInt(String string) {
