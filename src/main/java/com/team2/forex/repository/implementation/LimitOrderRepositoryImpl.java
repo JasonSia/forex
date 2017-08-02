@@ -36,25 +36,25 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
       System.out.println("PrePrice" + order.getPreferredPrice());
       int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID) "
       		+ "values (?,?,?,?,?,?,?,?,?,?,?)", 
-    		  	order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), order.getPreferredPrice(), null, order.getStatus().name(), null, 
+    		  	order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), order.getPreferredPrice(), null, order.getStatus().name(), order.getGoodTillDate(), 
     		  	order.getSubmittedTime(), null, order.getUserId());
-      return LimitgetOrderId(order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), order.getPreferredPrice(), order.getSubmittedTime(), order.getUserId()).getOrderId();
+      return LimitgetOrderId(order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), order.getPreferredPrice(), order.getGoodTillDate(), order.getSubmittedTime(), order.getUserId()).getOrderId();
     }
     
     @Override
 	@Transactional(readOnly=true)
-	public Order LimitgetOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
+	public Order LimitgetOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp goodTillDate, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
 		return jdbcTemplate.queryForObject("SELECT orderId FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
-				+ "size = ? AND preferredprice = ? AND submittedTime = ? AND userId = ? "
+				+ "size = ? AND preferredprice = ? AND goodTillDate = ? AND submittedTime = ? AND userId = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
-				new Object[]{orderType, currencyBuyInput, currencySellInput, size, preferredprice, submittedTime, userId}, 
+				new Object[]{orderType, currencyBuyInput, currencySellInput, size, preferredprice, goodTillDate, submittedTime, userId}, 
 				new LimitOrderRowMapper());
 	}
 
 	@Override
 	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size,
-			double preferredPrice, Timestamp submittedTime, String userId) {
+			double preferredPrice, Timestamp goodTillDate, Timestamp submittedTime, String userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

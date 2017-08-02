@@ -34,6 +34,9 @@ public class ForexController {
 	private MarketOrderService mos;
 	
 	@Autowired
+	private LimitOrderService los;
+	
+	@Autowired
 	private ForexStreamEmulationService emulationService;
 	
 	@Autowired
@@ -114,7 +117,7 @@ public class ForexController {
 		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		userOrder.setUserId(userid);
 		//userOrder.setPreferredPrice(userid);
-		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
+		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+los.placeLimitOrder(userOrder);
 		}
 	}
 	
