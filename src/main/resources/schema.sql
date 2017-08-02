@@ -13,6 +13,7 @@ CREATE TABLE users(
 
 CREATE TABLE orderList(
 	orderId int NOT NULL AUTO_INCREMENT,
+	orderNumber varchar(32),
 	orderType varchar(10) NOT NULL,
 	currencyBuy varchar(3) NOT NULL,
 	currencySell varchar(3) NOT NULL,

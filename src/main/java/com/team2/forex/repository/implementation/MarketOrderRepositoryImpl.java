@@ -38,9 +38,9 @@ public class MarketOrderRepositoryImpl implements MarketOrderRepository{
         order.setStatus(Status.FILLED);
     	int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID) "
       		+ "values (?,?,?,?,?,?,?,?,?,?,?)", 
-    		  	order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), null, price, order.getStatus().name(), null, 
+    		  	order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), null, price, order.getStatus().name(), null, 
     		  	order.getSubmittedTime(), order.getExecutedTime(), order.getUserId());
-        Order orderReturned=getOrder(order.getOrderType(), order.getCurrencyBuyInput(), order.getCurrencySellInput(), order.getSize(), order.getSubmittedTime(), order.getUserId());
+        Order orderReturned=getOrder(order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getSubmittedTime(), order.getUserId());
         System.out.println("Order returned ID: "+orderReturned.getOrderId());
         System.out.println("Order returned size: "+orderReturned.getSize());
         return orderReturned;
@@ -64,8 +64,8 @@ class OrderRowMapper implements RowMapper<Order>{
 	public Order mapRow(ResultSet rs, int i) throws SQLException {
 		Order order=new Order();
 		order.setOrderId(rs.getInt("orderId"));
-		order.setCurrencyBuy(Currency.valueOf(rs.getString("currencyBuy")));
-		order.setCurrencySell(Currency.valueOf(rs.getString("currencySell")));
+		order.setCurrencyBuy(rs.getString("currencyBuy"));
+		order.setCurrencySell(rs.getString("currencySell"));
 		order.setExecutedPrice(rs.getDouble("executedPrice"));
 		order.setSubmittedTime(rs.getTimestamp("submittedTime"));
 		order.setExecutedTime(rs.getTimestamp("executedTime"));

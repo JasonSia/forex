@@ -1,6 +1,9 @@
 package com.team2.forex.entity;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+
+import com.team2.forex.util.DateTimeUtil;
 
 public class Order {
 
@@ -16,10 +19,11 @@ public class Order {
 	private Timestamp submittedTime; 
 	private Timestamp executedTime;
 	private String userId;
-	private String currencyBuyInput;
-	private String currencySellInput;
+	//private String currencyBuyInput;
+	//private String currencySellInput;
+	private String orderNumber;
 	
-	public String getCurrencyBuyInput() {
+	/*public String getCurrencyBuyInput() {
 		return currencyBuyInput;
 	}
 
@@ -33,7 +37,7 @@ public class Order {
 
 	public void setCurrencySellInput(String currencySellInput) {
 		this.currencySellInput = currencySellInput;
-	}
+	}*/
 
 	public Order(){}
 	
@@ -63,14 +67,14 @@ public class Order {
 	public Currency getCurrencyBuy() {
 		return currencyBuy;
 	}
-	public void setCurrencyBuy(Currency currencyBuy) {
-		this.currencyBuy = currencyBuy;
+	public void setCurrencyBuy(String currencyBuyInput) {
+		this.currencyBuy = Currency.valueOf(currencyBuyInput);
 	}
 	public Currency getCurrencySell() {
 		return currencySell;
 	}
-	public void setCurrencySell(Currency currencySell) {
-		this.currencySell = currencySell;
+	public void setCurrencySell(String currencySellInput) {
+		this.currencySell = Currency.valueOf(currencySellInput);
 	}
 	
 	/*public String getCurrencyBuy() {
@@ -112,8 +116,8 @@ public class Order {
 	public Timestamp getGoodTillDate() {
 		return goodTillDate;
 	}
-	public void setGoodTillDate(Timestamp goodTillDate) {
-		this.goodTillDate = goodTillDate;
+	public void setGoodTillDate(String goodTillDateInput)throws ParseException {
+		this.goodTillDate = DateTimeUtil.stringToTimestamp(goodTillDateInput);
 	}
 	public Timestamp getSubmittedTime() {
 		return submittedTime;
