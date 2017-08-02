@@ -1,0 +1,6 @@
+String sql = "SELECT * FROM orderList WHERE "
+				+ "currencyBuy = ? AND (status = ? OR status = ?) "
+				+ "AND orderType = ? AND goodTillDate >= ? "
+				+ "INNER JOIN SELECT * FROM orderList WHERE "
+				+ "currencySell = ? AND (status = ? OR status = ?) "
+				+ "AND orderType = ? AND goodTillDate >= ?";
