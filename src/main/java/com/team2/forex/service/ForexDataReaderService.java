@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.team2.forex.entity.*;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
-import com.team2.forex.repository.implementation.HistoricalAuditDataRepository;
+import com.team2.forex.repository.implementation.HistoricalAuditDataRepositoryImpl;
 import com.team2.forex.repository.implementation.HistoricalTradeDataRepositoryImpl;
 import com.team2.forex.util.DataFormatCheckUtil;
 import com.team2.forex.util.DateTimeUtil;
@@ -23,7 +23,7 @@ public class ForexDataReaderService {
 	private HistoricalTradeDataRepository histRepo;
 	
 	@Autowired
-	private HistoricalAuditDataRepository auditRepo;
+	private HistoricalAuditDataRepositoryImpl auditRepo;
 	
 	public void parseCSV() throws ParseException {
 		// TODO Auto-generated method stub
@@ -32,6 +32,7 @@ public class ForexDataReaderService {
         String line = "";
         String cvsSplitBy = ",";
         int count=0;
+        int countInFile = 0;
         try {
 
             br = new BufferedReader(new FileReader(fileName));
@@ -40,11 +41,17 @@ public class ForexDataReaderService {
             	count+=1;
             	Currency buy = Currency.SGD, sell = Currency.EUR;
                 String[] data = line.split(cvsSplitBy);
+                
+                long startTime = System.currentTimeMillis();
+                
                 boolean isMalformed = DataFormatCheckUtil.checkData(data);
                 
+                long endTime = System.currentTimeMillis();
+                
                 if(isMalformed){
+                	countInFile+=1;
                 	System.out.println("isMalformed");
-                	HistoricalAudit histAudit = auditRepo.createHistoricalAuditData(new HistoricalAudit(count, fileName, 0.9)); 
+                	HistoricalAudit histAudit = auditRepo.createHistoricalAuditData(new HistoricalAudit(countInFile, count, fileName, endTime-startTime)); 
               
                 } else {
                 	System.out.println("isNotMalformed");

@@ -20,7 +20,7 @@ import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalAudit;
 
 @Repository
-public class HistoricalAuditDataRepository {
+public class HistoricalAuditDataRepositoryImpl {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
