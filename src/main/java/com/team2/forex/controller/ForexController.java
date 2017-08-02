@@ -126,7 +126,7 @@ public class ForexController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "done";
+		return "File fetched to the Database";
 	}
 
 	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")

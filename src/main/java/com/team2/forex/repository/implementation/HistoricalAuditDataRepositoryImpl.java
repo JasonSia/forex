@@ -18,16 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalAudit;
+import com.team2.forex.repository.HistoricalAuditDataRepository;
 
 @Repository
-public class HistoricalAuditDataRepositoryImpl {
+public class HistoricalAuditDataRepositoryImpl implements HistoricalAuditDataRepository{
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	@Transactional
 	public HistoricalAudit createHistoricalAuditData(HistoricalAudit historicalAuditData) {
-		final String sql = "insert into historicalAudit(historicalAuditId, fileRowNum, fileName, processingTime) values (?,?,?,?)";
+		final String sql = "insert into historicalAudit(historicalAuditId, fileRowNum, filename, processingTime) values (?,?,?,?)";
 		KeyHolder holder = new GeneratedKeyHolder();
 		
 		jdbcTemplate.update(new PreparedStatementCreator(){
@@ -49,6 +50,16 @@ public class HistoricalAuditDataRepositoryImpl {
 		return historicalAuditData;
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public HistoricalAudit getHistoricalAuditData(String fileName) throws EmptyResultDataAccessException{
+		return jdbcTemplate.queryForObject("SELECT * "
+				+ "FROM historicalAudit "
+				+ "WHERE filename = ? ", 
+				new Object [] {fileName}, 
+				new HistoricalAuditDataRowMapper());
+	}
+
 }
 
 class HistoricalAuditDataRowMapper implements RowMapper<HistoricalAudit>{
@@ -58,7 +69,7 @@ class HistoricalAuditDataRowMapper implements RowMapper<HistoricalAudit>{
 		return new HistoricalAudit(rs.getInt("historicalAuditId"),
 				rs.getInt("fileRowNum"),
 				rs.getString("fileName"),
-				rs.getDouble("lastPrice"));
+				rs.getDouble("processingTime"));
 	}
 	
 }
