@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.team2.forex.entity.*;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
+import com.team2.forex.repository.implementation.HistoricalAuditDataRepository;
 import com.team2.forex.repository.implementation.HistoricalTradeDataRepositoryImpl;
 import com.team2.forex.util.DataFormatCheckUtil;
 import com.team2.forex.util.DateTimeUtil;
@@ -21,25 +22,30 @@ public class ForexDataReaderService {
 	@Autowired
 	private HistoricalTradeDataRepository histRepo;
 	
+	@Autowired
+	private HistoricalAuditDataRepository auditRepo;
+	
 	public void parseCSV() throws ParseException {
 		// TODO Auto-generated method stub
 		String fileName = "/home/java/git/forex/src/main/resources/HistoricalTradeData.csv";
 		BufferedReader br = null;
         String line = "";
         String cvsSplitBy = ",";
-
+        int count=0;
         try {
 
             br = new BufferedReader(new FileReader(fileName));
             while ((line = br.readLine()) != null) {
                 // use comma as separator
-            	
+            	count+=1;
             	Currency buy = Currency.SGD, sell = Currency.EUR;
                 String[] data = line.split(cvsSplitBy);
                 boolean isMalformed = DataFormatCheckUtil.checkData(data);
                 
                 if(isMalformed){
                 	System.out.println("isMalformed");
+                	HistoricalAudit histAudit = auditRepo.createHistoricalAuditData(new HistoricalAudit(count, fileName, 0.9)); 
+              
                 } else {
                 	System.out.println("isNotMalformed");
                 	String[] cur = data[0].split("/");
