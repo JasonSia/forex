@@ -45,8 +45,8 @@ public class ForexController {
 			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
 				flagSell=1;
 		}
-		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
-			return "OrderType should only be BUY or SELL";
+		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
+			return "OrderType should only be Market or Limit";
 		}
 		else if(flagBuy!=1)
 		{   return "Buy Currency not supported.";	
@@ -60,7 +60,18 @@ public class ForexController {
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
 		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
 		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
-		return "Your order's unique ID is: "+mos.placeMarketOrder(userOrder);
+		Order completedOrder=mos.placeMarketOrder(userOrder);
+		if(completedOrder!=null){
+			String toPrint="Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+						   "The executed price is: "+completedOrder.getExecutedPrice()+"\n"+
+						   "The size is: "+completedOrder.getSize()+"\n"+
+						   "Total payment is: "+(completedOrder.getExecutedPrice()*completedOrder.getSize())+"\n"+
+						   "The submitted time is: "+completedOrder.getSubmittedTime()+"\n"+
+						   "The executed time is: "+completedOrder.getExecutedTime();
+		   return toPrint;
+		}
+		else
+		   return "Your input size is more than the lot size currently available, please try again.";
 		}
 	}
 	

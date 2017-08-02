@@ -16,6 +16,6 @@ import com.team2.forex.repository.MarketOrderRepository;
 
 public interface MarketOrderRepository{
 	
-	public int PlaceMarketOrder(Order order);
-	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId);
+	public Order PlaceAndExecuteMarketOrder(Order order, double price);
+	public Order getOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId);
 }
