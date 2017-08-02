@@ -14,15 +14,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	public void configureGlobal(AuthenticationManagerBuilder auth) 
 			throws Exception {
 		auth.inMemoryAuthentication()
-			.withUser("client")
-			.password("client")
-			.roles("USER");
+			.withUser("client").password("client").roles("USER")
+			.and().withUser("admin").password("admin").roles("ADMIN");
 	}
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
 		http.authorizeRequests()
-		.anyRequest().permitAll()
+		.antMatchers("/h2/**").hasRole("ADMIN")
+		.anyRequest().authenticated()
 		.and().httpBasic()
 		.and().headers().frameOptions().disable()
 		.and().csrf().disable();

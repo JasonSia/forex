@@ -7,10 +7,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,9 +41,54 @@ public class ForexController {
 	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
-	// produces={MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_XML_VALUE}
+	
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String createMarketOrder(@RequestBody Order userOrder){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
+		int flagBuy=0;
+		int flagSell=0;
+		for(Currency c: Currency.values()){
+			if(userOrder.getCurrencyBuyInput().equalsIgnoreCase(c.name()))
+				flagBuy=1;
+			if(userOrder.getCurrencySellInput().equalsIgnoreCase(c.name()))
+				flagSell=1;
+		}
+		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
+			return "OrderType should only be Market or Limit";
+		}
+		else if(flagBuy!=1)
+		{   return "ERROR: Buy Currency not supported.";	
+		}
+		else if(flagSell!=1)
+		{   return "ERROR: Sell Currency not supported.";	
+		}
+		else
+		{
+		userOrder.setStatus(Status.NOTFILLED);
+		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
+		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
+		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
+		Order completedOrder=mos.placeMarketOrder(userOrder);
+		if(completedOrder!=null){
+			String toPrint="Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+						   "The executed price is: "+completedOrder.getExecutedPrice()+"\n"+
+						   "The size is: "+completedOrder.getSize()+"\n"+
+						   "Total payment is: "+(completedOrder.getExecutedPrice()*completedOrder.getSize())+"\n"+
+						   "The submitted time is: "+completedOrder.getSubmittedTime()+"\n"+
+						   "The executed time is: "+completedOrder.getExecutedTime();
+		   return toPrint;
+		}
+		else
+		   return "Your input size is more than the lot size currently available, please try again.";
+	}
+		}
+	
+	
+	@RequestMapping(value="/placeLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String createLimitOrder(@RequestBody Order userOrder){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
 		int flagBuy=0;
 		int flagSell=0;
 		for(Currency c: Currency.values()){
@@ -49,13 +98,13 @@ public class ForexController {
 				flagSell=1;
 		}
 		if(!(userOrder.getOrderType().equals("BUY") || userOrder.getOrderType().equals("SELL"))){
-			return "OrderType should only be BUY or SELL";
+			return "ERROR: OrderType should only be BUY or SELL";
 		}
 		else if(flagBuy!=1)
-		{   return "Buy Currency not supported.";	
+		{   return "ERROR: Buy Currency not supported.";	
 		}
 		else if(flagSell!=1)
-		{   return "Sell Currency not supported.";	
+		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
 		{
@@ -63,7 +112,9 @@ public class ForexController {
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
 		userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
 		userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
-		return "Your order's unique ID is: "+mos.placeMarketOrder(userOrder);
+		userOrder.setUserId(userid);
+		//userOrder.setPreferredPrice(userid);
+		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+mos.placeMarketOrder(userOrder);
 		}
 	}
 	
@@ -104,9 +155,11 @@ public class ForexController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
+	}
+	
+	@RequestMapping("/helloworld")
+	public String helloWorld(){
+		return "helloworld";
 	}
 	
 }
