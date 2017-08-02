@@ -80,6 +80,58 @@ public class ForexStreamEmulationService {
 	}
 	
 	public String generateIncorrectStreamJson() throws JSONException{
-		return null;
+		Currency[] currencyArray = Currency.values();
+		Random random = new Random();
+		JSONArray jsonArray = new JSONArray();
+		Timestamp timestamp = new Timestamp(new Date().getTime());
+		
+		//generate list of trade data
+		for(int i = 0; i < currencyArray.length; i++){
+			for(int j = 0; j < currencyArray.length; j++){
+				//skip if i = j
+				if(i == j) continue;
+				
+				//get currency pair
+				Currency buy = currencyArray[i];
+				Currency sell = currencyArray[j];
+				
+				double price = 0;
+				try{
+					//get existing trade data and calculate new price
+					HistoricalTradeData historicalTradeData = historicalRepo.getLatestHistoricalTradeData(buy, sell);
+					
+					//if 0, minus; if 1, plus
+					int plusMinus = random.nextInt(2);
+					if(plusMinus == 0){
+						price = historicalTradeData.getPrice() - random.nextInt(101);
+					}else{
+						price = historicalTradeData.getPrice() + random.nextInt(101);
+					}
+					
+				}catch(EmptyResultDataAccessException ex){
+					//if no past price, generate new price
+					price = (random.nextInt(500) + 1.0) / 100.0;
+				}
+				
+				int lotSize = random.nextInt(1000) + 1;
+				
+				JSONObject obj = new JSONObject();
+				obj.put("buy", buy.toString());
+				obj.put("sell", sell.toString());
+				
+				if(j == 1){
+					obj.put("price", "abc");
+				}else{
+					obj.put("price", price);
+				}
+
+				obj.put("lotSize", lotSize);
+				obj.put("timestamp", timestamp.toString());
+				
+				jsonArray.put(obj);
+			}
+		}
+		
+		return jsonArray.toString();
 	}
 }

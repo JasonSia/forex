@@ -1,6 +1,8 @@
 package com.team2.forex.controller;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.team2.forex.service.*;
+import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
 
 @RestController
@@ -43,11 +46,22 @@ public class ForexController {
 	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")
 	@RequestMapping(value="/runStreamEmulation")
 	public void runStreamEmulation(){
-		//System.out.println("Running emulation" + new Date());
-		
 		try {
-			String streamJson = emulationService.generateStreamJson();
-			//System.out.println(streamJson);
+			//generate stream json based on chance
+			//if 0, incorrect json; else, correct json
+			String streamJson;
+			Random random = new Random();
+			int chance = random.nextInt(4);
+			
+			if(chance == 0){
+				streamJson = emulationService.generateIncorrectStreamJson();
+			}else{
+				streamJson = emulationService.generateStreamJson();
+			}
+			
+			//parse and process json
+			List<HistoricalTradeData> dataList = emulationService.parseStreamJson(streamJson);
+			emulationService.processStreamList(dataList);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
