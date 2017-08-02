@@ -2,6 +2,7 @@ package com.team2.forex.service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import org.json.JSONArray;
@@ -20,7 +21,11 @@ public class ForexStreamEmulationService {
 	@Autowired
 	private HistoricalTradeDataRepository historicalRepo;
 	
-	public void processStreamJson(String streamJson){
+	public List<HistoricalTradeData> parseStreamJson(String streamJson){
+		return null;
+	}
+	
+	public void processStreamList(List<HistoricalTradeData> historicalTradeDataList){
 		
 	}
 	
@@ -74,7 +79,7 @@ public class ForexStreamEmulationService {
 		return jsonArray.toString();
 	}
 	
-	public String generateIncorrectStreamJson(){
+	public String generateIncorrectStreamJson() throws JSONException{
 		return null;
 	}
 }
