@@ -1,6 +1,9 @@
 package com.team2.forex.entity;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+
+import com.team2.forex.util.DateTimeUtil;
 
 public class Order {
 
@@ -112,8 +115,8 @@ public class Order {
 	public Timestamp getGoodTillDate() {
 		return goodTillDate;
 	}
-	public void setGoodTillDate(Timestamp goodTillDate) {
-		this.goodTillDate = goodTillDate;
+	public void setGoodTillDate(String goodTillDateInput)throws ParseException {
+		this.goodTillDate = DateTimeUtil.stringToTimestamp(goodTillDateInput);
 	}
 	public Timestamp getSubmittedTime() {
 		return submittedTime;

@@ -14,8 +14,10 @@ import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
 import com.team2.forex.repository.MarketOrderRepository;
 
-public interface MarketOrderRepository{
+public interface LimitOrderRepository{
 	
-	public Order PlaceAndExecuteMarketOrder(Order order, double price);
-	public Order getOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId);
+	public int PlaceLimitOrder(Order order);
+	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredPrice, Timestamp goodTillDate, Timestamp submittedTime, String userId);
+	Order LimitgetOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size,
+			double preferredprice, Timestamp goodTillDate, Timestamp submittedTime,  String userId) throws EmptyResultDataAccessException;
 }
