@@ -11,11 +11,15 @@ import org.springframework.stereotype.Service;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
 import com.team2.forex.repository.LimitOrderRepository;
+import com.team2.forex.repository.OrderAuditRepository;
 
 @Service
 public class ForexMatchingService {
 	@Autowired
 	private LimitOrderRepository limitOrderRepository;
+	
+	@Autowired
+	private OrderAuditRepository orderAuditRepository;
 	
 	public void processLimitOrderMatching(){
 		boolean isRun = true;
@@ -47,6 +51,9 @@ public class ForexMatchingService {
 					//execute orders
 					limitOrderRepository.updateLimitOrder(buyOrder);
 					limitOrderRepository.updateLimitOrder(sellOrder);
+					
+					orderAuditRepository.createOrderAudit(buyOrder, ts);
+					orderAuditRepository.createOrderAudit(sellOrder, ts);
 				}else{
 					//create new split filled order
 					Order splitOrder = new Order();
@@ -81,6 +88,10 @@ public class ForexMatchingService {
 					limitOrderRepository.updateLimitOrder(buyOrder);
 					limitOrderRepository.updateLimitOrder(sellOrder);
 					limitOrderRepository.PlaceLimitOrder(splitOrder);
+					
+					orderAuditRepository.createOrderAudit(buyOrder, ts);
+					orderAuditRepository.createOrderAudit(sellOrder, ts);
+					orderAuditRepository.createOrderAudit(splitOrder, ts);
 				}
 			}catch(EmptyResultDataAccessException e){
 				isRun = false;
@@ -93,8 +104,13 @@ public class ForexMatchingService {
 		List<Order> orderList =  limitOrderRepository.getAllLimitOrderBeforeCurrentTime();
 		
 		for(Order order: orderList){
+			//set to expire
 			order.setStatus(Status.EXPIRED);
 			limitOrderRepository.updateLimitOrder(order);
+			
+			//add audit record
+			Timestamp ts = new Timestamp(new Date().getTime());
+			orderAuditRepository.createOrderAudit(order, ts);
 		}
 	}
 }

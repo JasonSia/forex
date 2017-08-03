@@ -119,6 +119,10 @@ public class ForexController {
 		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setPreferredPrice(userid);
 		Order completedOrder=los.placeLimitOrder(userOrder);
+		
+		//run matching service
+		matchingService.processLimitOrderMatching();
+		
 		String toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
 				       "Your order's order number is: "+completedOrder.getOrderNumber()+"\n";
 		return toPrint;
@@ -194,6 +198,7 @@ public class ForexController {
 		return "helloworld";
 	}
 	
+	@Scheduled(fixedDelayString="${com.team2.forex.matching.refreshrate}")
 	@RequestMapping("/runLimitOrderMatching")
 	public void runLimitOrderMatching(){
 		matchingService.processLimitOrderMatching();
