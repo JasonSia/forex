@@ -1,18 +1,10 @@
 package com.team2.forex.repository;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
-import com.team2.forex.repository.MarketOrderRepository;
 
 public interface LimitOrderRepository{
 	
@@ -23,4 +15,5 @@ public interface LimitOrderRepository{
 	public Order checkLimitOrderExists(String orderNumber);
 	public String cancelOrder(int orderId);
 	public Order[] matchLimitOrder();
+	public List<Order> getAllLimitOrder();
 }

@@ -2,12 +2,16 @@ package com.team2.forex;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.http.HttpStatus;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.team2.forex.entity.Order;
@@ -75,11 +80,37 @@ public class ForexMatchingTest {
 	
 	@Test
 	public void testCleanUpLimitOrder(){
+		Timestamp ts = new Timestamp(new Date().getTime());
 		matchingService.cleanUpLimitOrder();
+		List<Order> limitOrderList = limitOrderRepository.getAllLimitOrder();
+		
+		//check that all limit orders are later than current date after clean up
+		for(Order order: limitOrderList){
+			assertThat("Goodtilldate should be later than current date", order.getGoodTillDate(), greaterThan(ts));
+		}
 	}
 	
 	@Test
 	public void testMatchingService(){
+		given()
+		.auth().basic("client", "client")
+		.when().get("/runLimitOrderMatching")
+		.then().statusCode(HttpStatus.SC_OK);
 		
+		try{
+			Order[] order = limitOrderRepository.matchLimitOrder();
+			Assert.fail("There should not be any matching limit order after running matching service");
+		}catch(EmptyResultDataAccessException e){
+			//continue to run
+		}
+		
+		Timestamp ts = new Timestamp(new Date().getTime());
+		matchingService.cleanUpLimitOrder();
+		List<Order> limitOrderList = limitOrderRepository.getAllLimitOrder();
+		
+		//check that all limit orders are later than current date after clean up
+		for(Order testOrder: limitOrderList){
+			assertThat("Goodtilldate should be later than current date", testOrder.getGoodTillDate(), greaterThan(ts));
+		}
 	}
 }

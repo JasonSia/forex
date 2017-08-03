@@ -46,17 +46,15 @@ public class ForexController {
 	private ForexDataReaderService fdrs;
 	
 	@Autowired
-<<<<<<< HEAD
 	private OrderService orderService;
 	
-=======
-<<<<<<< HEAD
+
+	@Autowired
 	private MovingAverageService movAvgService;
-=======
+
+	@Autowired
 	private ForexMatchingService matchingService;
->>>>>>> 5b4ddd7b63fadde1be7793f07d168893c9ee4464
->>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
-	
+
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	
@@ -126,9 +124,7 @@ public class ForexController {
 		return toPrint;
 		}
 	}
-	
-<<<<<<< HEAD
-=======
+
 	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String cancelLimitOrder(@RequestBody String orderJson){
 		JSONObject obj;
@@ -147,7 +143,7 @@ public class ForexController {
 		return null;		
 	}
 	
->>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
+
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {
@@ -197,7 +193,11 @@ public class ForexController {
 		matchingService.processLimitOrderMatching();
 		return "helloworld";
 	}
-	
+	@RequestMapping("/runLimitOrderMatching")
+	public void runLimitOrderMatching(){
+		matchingService.processLimitOrderMatching();
+		matchingService.cleanUpLimitOrder();
+	}
 	@RequestMapping("/getOpenOrder")
 	public List<Order> openOrder(){
 		return orderService.getOpenOrder();

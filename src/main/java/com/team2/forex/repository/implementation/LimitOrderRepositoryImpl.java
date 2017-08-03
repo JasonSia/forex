@@ -3,20 +3,17 @@ package com.team2.forex.repository.implementation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.team2.forex.entity.Currency;
-import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
 import com.team2.forex.repository.LimitOrderRepository;
@@ -47,7 +44,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
     @Override
 	@Transactional(readOnly=true)
 	public Order LimitgetOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp goodTillDate, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
-		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber FROM orderList "
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber, goodTillDate FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
 				+ "size = ? AND preferredprice = ? AND goodTillDate = ? AND submittedTime = ? AND userId = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
@@ -107,6 +104,14 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 				new Object[]{ts, ts}, 
 				new LimitOrderMatchingRowMapper());
 	}
+
+	@Override
+	public List<Order> getAllLimitOrder() {
+		String sql = "select orderId, currencyBuy, currencySell, executedPrice, "
+				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
+				+ "from orderList where orderType = 'limit'";
+		return jdbcTemplate.query(sql, new LimitOrderRowMapper());
+	}
 }
 
 class LimitOrderRowMapper implements RowMapper<Order>{
@@ -122,6 +127,7 @@ class LimitOrderRowMapper implements RowMapper<Order>{
 		order.setExecutedTime(rs.getTimestamp("executedTime"));
 		order.setSize(rs.getInt("size"));
 		order.setOrderNumber(rs.getString("orderNumber"));
+		order.setGoodTillDate(rs.getTimestamp("goodTillDate"));
 		System.out.println("Limit order id received in order row mapper is: "+order.getOrderId());
 		return order;
 	}

@@ -29,3 +29,7 @@ values ('limit', 'AUD', 'SGD', 100, 2.00, 'FILLED', '2020-07-30 23:04:13', '2017
 insert into orderList(orderType, currencyBuy, currencySell, 
 size, preferredPrice,status, goodTillDate, submittedTime,userid,orderNumber, EXECUTEDPRICE, EXECUTEDTIME)
 values ('limit', 'USD', 'CAD', 100, 2.00, 'FILLED', '2020-07-30 23:04:13', '2017-08-01 23:04:15','client','c81b59cb37dbe7d2607432877c12cac2', 2.04, '2017-08-01 23:05:15');
+
+insert into orderList(orderType, currencyBuy, currencySell, 
+size, preferredPrice,status, goodTillDate, submittedTime,userid,orderNumber, EXECUTEDPRICE, EXECUTEDTIME)
+values ('limit', 'USD', 'CAD', 100, 2.00, 'FILLED', '2016-07-30 23:04:13', '2017-08-01 23:04:15','client','c81b59cbde3he7d2607432877c12cac2', 2.04, '2017-08-01 23:05:15');
