@@ -51,4 +51,17 @@ public class OrderAuditRepositoryImpl implements OrderAuditRepository{
         	System.out.println("Order Audit row created!");
     }
 }
+    
+    @Override
+    @Transactional
+    public void updateOrderAudit(Order order, Timestamp modifiedTime){
+    	System.out.println("Order passed for cancellation is: "+order.getOrderId());
+    	if(order.getOrderType().equalsIgnoreCase("LIMIT")){
+    	jdbcTemplate.update("insert into ORDERAUDIT(ORDERID,ORDERNUMBER,ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID,MODIFIEDTIME) "
+          		+ "values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+        		  	order.getOrderId(), order.getOrderNumber(), order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getPreferredPrice(), order.getExecutedPrice(), order.getStatus().name(), order.getGoodTillDate(), 
+        		  	order.getSubmittedTime(), order.getExecutedTime(), order.getUserId(), modifiedTime);
+    	System.out.println("Order Audit row created!");
+    }
+}
 }

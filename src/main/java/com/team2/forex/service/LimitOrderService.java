@@ -1,16 +1,22 @@
 package com.team2.forex.service;
 
+import java.sql.Timestamp;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
 import com.team2.forex.repository.LimitOrderRepository;
+import com.team2.forex.repository.OrderAuditRepository;
 
 @Component
 public class LimitOrderService {
 
 	@Autowired
 	LimitOrderRepository limitOrderRp;
+	
+	@Autowired
+	OrderAuditRepository orderAuditRp;
 	
 	public Order placeLimitOrder(Order lmtOrder){
 		return limitOrderRp.PlaceLimitOrder(lmtOrder);
@@ -34,7 +40,10 @@ public class LimitOrderService {
 			{
 				System.out.println("ok with order owner and status, start cancel");
 				order.setStatus(Status.CANCELLED);
-				return limitOrderRp.cancelOrder(order.getOrderId());
+				String result=limitOrderRp.cancelOrder(order.getOrderId());
+				Timestamp currentTime=new Timestamp(System.currentTimeMillis());
+				orderAuditRp.updateOrderAudit(order, currentTime);
+				return result;
 			}
 		}
 		else

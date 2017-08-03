@@ -131,7 +131,7 @@ public class ForexController {
 		try {
 			obj = new JSONObject(orderJson);
 			String orderNumber = obj.getString("orderNumber");
-			System.out.println("orderId captured from user: "+orderNumber);
+			System.out.println("orderNumber captured from user: "+orderNumber);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			String userid = auth.getName();
 			String cancelResult=los.cancelLimitOrder(orderNumber, userid);
