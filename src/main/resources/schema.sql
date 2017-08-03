@@ -20,7 +20,7 @@ CREATE TABLE orderList(
 	size int NOT NULL,
 	preferredPrice double,
 	executedPrice double,
-	status varchar (10) NOT NULL,
+	status varchar (20) NOT NULL,
 	goodTillDate timestamp,
 	submittedTime timestamp NOT NULL, 
 	executedTime timestamp,
@@ -63,7 +63,6 @@ CREATE TABLE historicalAudit(
 	processingTime double,
 	PRIMARY KEY (historicalAuditId)
 ); 
-
 
 
 
