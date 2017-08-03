@@ -7,4 +7,5 @@ import com.team2.forex.entity.Order;
 public interface TradersOrderRepository {
 	//get open orders (unfilled & partially filled)
 	public List<Order> getOpenOrders ();
+	public List<Order> getClosedOrders ();
 }

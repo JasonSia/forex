@@ -203,4 +203,9 @@ public class ForexController {
 		return orderService.getOpenOrder();
 	}
 	
+	@RequestMapping("/getClosedOrder")
+	public List<Order> closedOrder(){
+		return orderService.getClosedOrder();
+	}
+	
 }

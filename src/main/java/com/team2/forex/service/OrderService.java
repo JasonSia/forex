@@ -12,10 +12,14 @@ import com.team2.forex.repository.TradersOrderRepository;
 public class OrderService {
 
 	@Autowired
-	TradersOrderRepository openOrderRp;
+	TradersOrderRepository orderRp;
 	
 	public List<Order> getOpenOrder(){
-		return openOrderRp.getOpenOrders();
+		return orderRp.getOpenOrders();
+	}
+	
+	public List<Order> getClosedOrder(){
+		return orderRp.getClosedOrders();
 	}
 	
 	
