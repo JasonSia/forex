@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.team2.forex.entity.*;
+import com.team2.forex.repository.HistoricalAuditDataRepository;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
 import com.team2.forex.repository.implementation.HistoricalAuditDataRepositoryImpl;
 import com.team2.forex.repository.implementation.HistoricalTradeDataRepositoryImpl;
@@ -23,7 +24,7 @@ public class ForexDataReaderService {
 	private HistoricalTradeDataRepository histRepo;
 	
 	@Autowired
-	private HistoricalAuditDataRepositoryImpl auditRepo;
+	private HistoricalAuditDataRepository auditRepo;
 	
 	public void parseCSV() throws ParseException {
 		// TODO Auto-generated method stub

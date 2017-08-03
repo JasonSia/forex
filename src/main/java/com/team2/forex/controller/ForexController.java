@@ -46,7 +46,11 @@ public class ForexController {
 	private ForexDataReaderService fdrs;
 	
 	@Autowired
+<<<<<<< HEAD
+	private MovingAverageService movAvgService;
+=======
 	private ForexMatchingService matchingService;
+>>>>>>> 5b4ddd7b63fadde1be7793f07d168893c9ee4464
 	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
@@ -118,6 +122,8 @@ public class ForexController {
 		}
 	}
 	
+<<<<<<< HEAD
+=======
 	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String cancelLimitOrder(@RequestBody String orderJson){
 		JSONObject obj;
@@ -136,6 +142,7 @@ public class ForexController {
 		return null;		
 	}
 	
+>>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {
@@ -145,6 +152,11 @@ public class ForexController {
 			e.printStackTrace();
 		}
 		return "File fetched to the Database";
+	}
+	
+	@RequestMapping(value="/calcAverage", method=RequestMethod.GET)
+	public String calcMovingAverage(){
+		return movAvgService.calc();
 	}
 
 	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")
