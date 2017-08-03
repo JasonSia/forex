@@ -51,6 +51,20 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 				new Object[]{orderType, currencyBuyInput, currencySellInput, size, preferredprice, goodTillDate, submittedTime, userId}, 
 				new LimitOrderRowMapper());
 	}
+    
+    @Override
+	@Transactional(readOnly=true)
+	public Order checkLimitOrderExists(int orderId) throws EmptyResultDataAccessException{
+    	System.out.println("inside checkLimitOrderExists in rep");
+    	try{
+		return jdbcTemplate.queryForObject("SELECT preferredPrice FROM orderList "
+				+ "WHERE orderId = ?", 
+				new Object[]{orderId}, 
+				new LimitOrderExistsRowMapper());
+    	}catch(Exception e){
+    		return null;
+    	}
+	}
 
 	@Override
 	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size,
@@ -67,6 +81,18 @@ class LimitOrderRowMapper implements RowMapper<Order>{
 		Order order=new Order();
 		order.setOrderId(rs.getInt("orderId"));
 		System.out.println("Limit order id received in order row mapper is: "+order.getOrderId());
+		return order;
+	}
+}
+
+class LimitOrderExistsRowMapper implements RowMapper<Order>{
+
+	@Override
+	public Order mapRow(ResultSet rs, int i) throws SQLException {
+		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
+		Order order=new Order();
+		order.setPreferredPrice(rs.getInt("preferredPrice"));
+		System.out.println("Limit order preferredPrice is: "+order.getPreferredPrice());
 		return order;
 	}
 }

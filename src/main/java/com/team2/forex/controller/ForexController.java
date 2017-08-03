@@ -122,6 +122,15 @@ public class ForexController {
 		}
 	}
 	
+	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String cancelLimitOrder(@RequestBody int orderId){
+		System.out.println("orderId captured from user: "+orderId);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userid = auth.getName();
+		String cancelResult=los.cancelLimitOrder(orderId);
+		return cancelResult;
+	}
+	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {

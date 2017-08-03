@@ -16,5 +16,18 @@ public class LimitOrderService {
 		
 	}
 	
+	public String cancelLimitOrder(int orderId){
+		Order order=limitOrderRp.checkLimitOrderExists(orderId);
+		if(order!=null){
+		  System.out.println("in los: order found, preferredPrice: "+order.getPreferredPrice());
+	      return "success";
+		}
+		else
+		{
+		    System.out.println("in los: order not found");
+			return "order with orderId not found";
+		}
+	}
+	
 }
 
