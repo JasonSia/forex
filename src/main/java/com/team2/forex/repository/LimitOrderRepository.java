@@ -20,5 +20,5 @@ public interface LimitOrderRepository{
 	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredPrice, Timestamp goodTillDate, Timestamp submittedTime, String userId);
 	Order LimitgetOrder(String orderType, String currencyBuyInput, String currencySellInput, int size,
 			double preferredprice, Timestamp goodTillDate, Timestamp submittedTime,  String userId) throws EmptyResultDataAccessException;
-	public Order checkLimitOrderExists(int orderId);
+	public Order checkLimitOrderExists(String orderNumber);
 }
