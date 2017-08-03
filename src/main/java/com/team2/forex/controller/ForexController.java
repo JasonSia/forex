@@ -42,6 +42,9 @@ public class ForexController {
 	@Autowired
 	private ForexDataReaderService fdrs;
 	
+	@Autowired
+	private MovingAverageService movAvgService;
+	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	
@@ -122,15 +125,6 @@ public class ForexController {
 		}
 	}
 	
-	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String cancelLimitOrder(@RequestBody int orderId){
-		System.out.println("orderId captured from user: "+orderId);
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String userid = auth.getName();
-		String cancelResult=los.cancelLimitOrder(orderId);
-		return cancelResult;
-	}
-	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {
@@ -140,6 +134,11 @@ public class ForexController {
 			e.printStackTrace();
 		}
 		return "File fetched to the Database";
+	}
+	
+	@RequestMapping(value="/calcAverage", method=RequestMethod.GET)
+	public String calcMovingAverage(){
+		return movAvgService.calc();
 	}
 
 	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")

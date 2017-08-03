@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.team2.forex.entity.HistoricalAudit;
 import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.repository.HistoricalAuditDataRepository;
+import com.team2.forex.repository.HistoricalTradeDataRepository;
 import com.team2.forex.service.ForexDataReaderService;
 
 @RunWith(SpringRunner.class)
@@ -23,6 +24,9 @@ public class ForexTradeDataReaderTest {
 	
 	@Autowired
 	private HistoricalAuditDataRepository auditRepo;
+	
+	@Autowired
+	private HistoricalTradeDataRepository tradeDataRepo;
 		
 	@Test
 	public void historicalAuditDataInsertedInDatabase() throws ParseException{
@@ -32,4 +36,5 @@ public class ForexTradeDataReaderTest {
 		
 		assertEquals("checking row num", 7, histAuditData.getFileRowNum());
 	}
+	
 }
