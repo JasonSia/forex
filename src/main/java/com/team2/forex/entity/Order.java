@@ -47,27 +47,32 @@ public class Order {
 		return currencyBuy;
 	}
 	public void setCurrencyBuy(String currencyBuyInput) {
-		this.currencyBuy = Currency.valueOf(currencyBuyInput);
+		int flag=0;
+		for(Currency c: Currency.values()){
+			if(currencyBuyInput.equalsIgnoreCase(c.name())){
+				flag=1;
+			}
+		}
+		if(flag==1)
+		  this.currencyBuy = Currency.valueOf(currencyBuyInput);
+		else
+		  this.currencyBuy=null;
 	}
 	public Currency getCurrencySell() {
 		return currencySell;
 	}
 	public void setCurrencySell(String currencySellInput) {
-		this.currencySell = Currency.valueOf(currencySellInput);
+		int flag=0;
+		for(Currency c: Currency.values()){
+			if(currencySellInput.equalsIgnoreCase(c.name())){
+				flag=1;
+			}
+		}
+		if(flag==1)
+		  this.currencySell = Currency.valueOf(currencySellInput);
+		else
+		  this.currencySell=null;
 	}
-	
-	/*public String getCurrencyBuy() {
-		return currencyBuy;
-	}
-	public void setCurrencyBuy(String currencyBuy) {
-		this.currencyBuy = currencyBuy;
-	}
-	public String getCurrencySell() {
-		return currencySell;
-	}
-	public void setCurrencySell(String currencySell) {
-		this.currencySell = currencySell;
-	}*/
 	public int getSize() {
 		return size;
 	}
