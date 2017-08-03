@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.team2.forex.entity.Order;
-import com.team2.forex.repository.TradersOpenOrderRepository;
+import com.team2.forex.repository.TradersOrderRepository;
 
 
 @RunWith(SpringRunner.class)
@@ -20,7 +20,7 @@ public class OpenOrderTest {
 	
 	
 	@Autowired
-	private TradersOpenOrderRepository openOrder; 
+	private TradersOrderRepository openOrder; 
 	
 	@Test
 	public void testCountOpenOrder(){
