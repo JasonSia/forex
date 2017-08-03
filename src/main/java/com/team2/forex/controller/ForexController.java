@@ -45,6 +45,10 @@ public class ForexController {
 	@Autowired
 	private ForexDataReaderService fdrs;
 	
+	@Autowired
+	private OrderService orderService;
+	
+	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	
@@ -175,6 +179,11 @@ public class ForexController {
 	@RequestMapping("/helloworld")
 	public String helloWorld(){
 		return "helloworld";
+	}
+	
+	@RequestMapping("/getOpenOrder")
+	public List<Order> openOrder(){
+		return orderService.getOpenOrder();
 	}
 	
 }

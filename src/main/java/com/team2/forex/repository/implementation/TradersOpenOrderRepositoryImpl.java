@@ -26,7 +26,7 @@ public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepositor
 	@Override
 	@Transactional(readOnly=true)
 	public List<Order> getOpenOrders() throws EmptyResultDataAccessException {
-		return jdbcTemplate.query("select * from orderList where orderType='limit'and status=unfilled or status=partiallyfilled",
+		return jdbcTemplate.query("select * from orderList where orderType='limit'and (status='NOTFILLED' or status='PARTIALLYFILLED')",
 				new RowMapper <Order>() {
 					@Override public Order mapRow(ResultSet rs, int rowNum) throws SQLException {	
 						Order openOrder = new Order(
