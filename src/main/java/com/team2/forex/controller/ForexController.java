@@ -181,4 +181,10 @@ public class ForexController {
 		return "helloworld";
 	}
 	
+	@RequestMapping("/runLimitOrderMatching")
+	public void runLimitOrderMatching(){
+		matchingService.processLimitOrderMatching();
+		matchingService.cleanUpLimitOrder();
+	}
+	
 }
