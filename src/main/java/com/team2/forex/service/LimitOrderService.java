@@ -28,7 +28,7 @@ public class LimitOrderService {
 			//else if (limitOrderRp.checkLimitOrderExists(orderNumber) = null)
 			else if(!(order.getStatus().equals(Status.PARTIALLYFILLED) || order.getStatus().equals(Status.NOTFILLED))) {
 				System.out.println("in los: order found, status: " +order.getStatus());
-				return "ERROR: The order has already filled or canceled.";
+				return "ERROR: The order has already filled or cancelled.";
 		    }
 			else
 			{
