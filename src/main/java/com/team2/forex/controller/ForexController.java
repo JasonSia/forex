@@ -45,6 +45,16 @@ public class ForexController {
 	@Autowired
 	private ForexDataReaderService fdrs;
 	
+	@Autowired
+	private OrderService orderService;
+	
+
+	@Autowired
+	private MovingAverageService movAvgService;
+
+	@Autowired
+	private ForexMatchingService matchingService;
+
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	
@@ -114,7 +124,7 @@ public class ForexController {
 		return toPrint;
 		}
 	}
-	
+
 	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
 	public String cancelLimitOrder(@RequestBody String orderJson){
 		JSONObject obj;
@@ -124,16 +134,16 @@ public class ForexController {
 			System.out.println("orderId captured from user: "+orderNumber);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			String userid = auth.getName();
-			String cancelResult=los.cancelLimitOrder(orderNumber);
+			String cancelResult=los.cancelLimitOrder(orderNumber, userid);
 			return cancelResult;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
-		
+		return null;		
 	}
 	
+
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {
@@ -143,6 +153,11 @@ public class ForexController {
 			e.printStackTrace();
 		}
 		return "File fetched to the Database";
+	}
+	
+	@RequestMapping(value="/calcAverage", method=RequestMethod.GET)
+	public String calcMovingAverage(){
+		return movAvgService.calc();
 	}
 
 	@Scheduled(fixedDelayString="${com.team2.forex.emulation.refreshrate}")
@@ -175,7 +190,17 @@ public class ForexController {
 	
 	@RequestMapping("/helloworld")
 	public String helloWorld(){
+		matchingService.processLimitOrderMatching();
 		return "helloworld";
+	}
+	@RequestMapping("/runLimitOrderMatching")
+	public void runLimitOrderMatching(){
+		matchingService.processLimitOrderMatching();
+		matchingService.cleanUpLimitOrder();
+	}
+	@RequestMapping("/getOpenOrder")
+	public List<Order> openOrder(){
+		return orderService.getOpenOrder();
 	}
 	
 }

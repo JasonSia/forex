@@ -4,18 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.team2.forex.entity.Currency;
-import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
 import com.team2.forex.repository.LimitOrderRepository;
@@ -46,7 +44,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
     @Override
 	@Transactional(readOnly=true)
 	public Order LimitgetOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp goodTillDate, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
-		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber FROM orderList "
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber, goodTillDate FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
 				+ "size = ? AND preferredprice = ? AND goodTillDate = ? AND submittedTime = ? AND userId = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
@@ -57,16 +55,26 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
     @Override
 	@Transactional(readOnly=true)
 	public Order checkLimitOrderExists(String orderNumber) throws EmptyResultDataAccessException{
-    	System.out.println("inside checkLimitOrderExists in rep");
+    	System.out.println("inside checkLimitOrderExists in rep, ordernumber=" + orderNumber);
     	try{
-		return jdbcTemplate.queryForObject("SELECT preferredPrice FROM orderList "
-				+ "WHERE orderNumber = ?", 
+		return jdbcTemplate.queryForObject("SELECT orderId, status, userId FROM orderList "
+				+ "WHERE orderNumber = ? ORDER BY EXECUTEDTIME LIMIT 1", 
 				new Object[]{orderNumber}, 
 				new LimitOrderExistsRowMapper());
     	}catch(Exception e){
     		return null;
     	}
 	}
+    
+    
+    @Override
+    @Transactional
+    public String cancelOrder(int OrderId) {
+      System.out.println("start cancel order " + OrderId);
+      jdbcTemplate.update("UPDATE ORDERLIST SET status = 'CANCELLED' WHERE OrderId = ?", 
+    		  	OrderId);
+      return "SUCCESSFUL: The order has been cancelled.";
+    }
 
 	@Override
 	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size,
@@ -74,7 +82,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public Order[] matchLimitOrder() {
@@ -85,7 +93,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 				+ "AND (limitA.status = 'NOTFILLED' OR limitA.status = 'PARTIALLYFILLED') "
 				+ "AND (limitB.status = 'NOTFILLED' OR limitB.status = 'PARTIALLYFILLED') "
 				+ "AND limitA.goodTillDate >= ? AND limitB.goodTillDate >= ? "
-				+ "AND limitA.size > limitB.size "
+				+ "AND limitA.size >= limitB.size "
 				+ "AND limitB.preferredPrice < limitA.preferredPrice "
 				+ "ORDER BY limitA.submittedTime asc "
 				+ "LIMIT 1";
@@ -95,6 +103,14 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 		return jdbcTemplate.queryForObject(sql, 
 				new Object[]{ts, ts}, 
 				new LimitOrderMatchingRowMapper());
+	}
+
+	@Override
+	public List<Order> getAllLimitOrder() {
+		String sql = "select orderId, currencyBuy, currencySell, executedPrice, "
+				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
+				+ "from orderList where orderType = 'limit'";
+		return jdbcTemplate.query(sql, new LimitOrderRowMapper());
 	}
 }
 
@@ -111,19 +127,8 @@ class LimitOrderRowMapper implements RowMapper<Order>{
 		order.setExecutedTime(rs.getTimestamp("executedTime"));
 		order.setSize(rs.getInt("size"));
 		order.setOrderNumber(rs.getString("orderNumber"));
+		order.setGoodTillDate(rs.getTimestamp("goodTillDate"));
 		System.out.println("Limit order id received in order row mapper is: "+order.getOrderId());
-		return order;
-	}
-}
-
-class LimitOrderExistsRowMapper implements RowMapper<Order>{
-
-	@Override
-	public Order mapRow(ResultSet rs, int i) throws SQLException {
-		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
-		Order order=new Order();
-		order.setPreferredPrice(rs.getInt("preferredPrice"));
-		System.out.println("Limit order preferredPrice is: "+order.getPreferredPrice());
 		return order;
 	}
 }
@@ -160,5 +165,21 @@ class LimitOrderMatchingRowMapper implements RowMapper<Order[]>{
 		orderB.setExecutedTime(rs.getTimestamp(25));
 		orderB.setUserId(rs.getString(26));
 		return new Order[]{orderA, orderB};
+	}
+}
+
+class LimitOrderExistsRowMapper implements RowMapper<Order>{
+
+	@Override
+	public Order mapRow(ResultSet rs, int i) throws SQLException {
+		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
+		Order order=new Order();
+		order.setStatus(Status.valueOf(rs.getString("status")));
+		order.setUserId(rs.getString("userId"));
+		order.setOrderId(rs.getInt("OrderId"));
+		System.out.println("Limit order Status is: "+order.getStatus());
+		System.out.println("Limit order User is: "+order.getUserId());
+		System.out.println("Limit order ID is: "+order.getOrderId());
+		return order;
 	}
 }

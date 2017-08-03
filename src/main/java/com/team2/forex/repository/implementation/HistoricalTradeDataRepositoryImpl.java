@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.repository.HistoricalTradeDataRepository;
+
 
 @Repository
 public class HistoricalTradeDataRepositoryImpl implements HistoricalTradeDataRepository {
@@ -61,6 +63,17 @@ public class HistoricalTradeDataRepositoryImpl implements HistoricalTradeDataRep
 		int newHistoricalId = holder.getKey().intValue();
 		historicalTradeData.setHistoricalTradeDataId(newHistoricalId);
 		return historicalTradeData;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<HistoricalTradeData> getHistoricalTradeData(Currency buy, Currency sell) throws EmptyResultDataAccessException{
+		// TODO Auto-generated method stub
+		return jdbcTemplate.query("SELECT historicalId, currencyBuy, currencySell, "
+				+ "lastPrice, lotSize, transactionTime FROM historical "
+				+ "WHERE currencyBuy = ? AND currencySell = ? ", 
+				new Object[]{buy.toString(), sell.toString()}, 
+				new HistoricalTradeDataRowMapper());
 	}
 
 }
