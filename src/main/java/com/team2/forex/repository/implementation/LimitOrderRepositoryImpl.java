@@ -3,6 +3,7 @@ package com.team2.forex.repository.implementation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public Order[] matchLimitOrder() {
@@ -95,7 +96,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 				+ "AND (limitA.status = 'NOTFILLED' OR limitA.status = 'PARTIALLYFILLED') "
 				+ "AND (limitB.status = 'NOTFILLED' OR limitB.status = 'PARTIALLYFILLED') "
 				+ "AND limitA.goodTillDate >= ? AND limitB.goodTillDate >= ? "
-				+ "AND limitA.size > limitB.size "
+				+ "AND limitA.size >= limitB.size "
 				+ "AND limitB.preferredPrice < limitA.preferredPrice "
 				+ "ORDER BY limitA.submittedTime asc "
 				+ "LIMIT 1";
@@ -122,22 +123,6 @@ class LimitOrderRowMapper implements RowMapper<Order>{
 		order.setSize(rs.getInt("size"));
 		order.setOrderNumber(rs.getString("orderNumber"));
 		System.out.println("Limit order id received in order row mapper is: "+order.getOrderId());
-		return order;
-	}
-}
-
-class LimitOrderExistsRowMapper implements RowMapper<Order>{
-
-	@Override
-	public Order mapRow(ResultSet rs, int i) throws SQLException {
-		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
-		Order order=new Order();
-		order.setStatus(Status.valueOf(rs.getString("status")));
-		order.setUserId(rs.getString("userId"));
-		order.setOrderId(rs.getInt("OrderId"));
-		System.out.println("Limit order Status is: "+order.getStatus());
-		System.out.println("Limit order User is: "+order.getUserId());
-		System.out.println("Limit order ID is: "+order.getOrderId());
 		return order;
 	}
 }
@@ -174,5 +159,21 @@ class LimitOrderMatchingRowMapper implements RowMapper<Order[]>{
 		orderB.setExecutedTime(rs.getTimestamp(25));
 		orderB.setUserId(rs.getString(26));
 		return new Order[]{orderA, orderB};
+	}
+}
+
+class LimitOrderExistsRowMapper implements RowMapper<Order>{
+
+	@Override
+	public Order mapRow(ResultSet rs, int i) throws SQLException {
+		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
+		Order order=new Order();
+		order.setStatus(Status.valueOf(rs.getString("status")));
+		order.setUserId(rs.getString("userId"));
+		order.setOrderId(rs.getInt("OrderId"));
+		System.out.println("Limit order Status is: "+order.getStatus());
+		System.out.println("Limit order User is: "+order.getUserId());
+		System.out.println("Limit order ID is: "+order.getOrderId());
+		return order;
 	}
 }
