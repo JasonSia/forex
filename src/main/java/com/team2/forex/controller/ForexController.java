@@ -46,7 +46,11 @@ public class ForexController {
 	private ForexDataReaderService fdrs;
 	
 	@Autowired
+<<<<<<< HEAD
 	private MovingAverageService movAvgService;
+=======
+	private ForexMatchingService matchingService;
+>>>>>>> 5b4ddd7b63fadde1be7793f07d168893c9ee4464
 	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
@@ -185,6 +189,7 @@ public class ForexController {
 	
 	@RequestMapping("/helloworld")
 	public String helloWorld(){
+		matchingService.processLimitOrderMatching();
 		return "helloworld";
 	}
 	
