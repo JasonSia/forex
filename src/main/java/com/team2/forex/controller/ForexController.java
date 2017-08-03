@@ -52,21 +52,13 @@ public class ForexController {
 	public String createMarketOrder(@RequestBody Order userOrder)throws NoSuchAlgorithmException{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
-		int flagBuy=0;
-		int flagSell=0;
-		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
-				flagBuy=1;
-			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
-				flagSell=1;
-		}
 		if(!(userOrder.getOrderType().equalsIgnoreCase("market"))){
 			return "OrderType should only be Market";
 		}
-		else if(flagBuy!=1)
+		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
-		else if(flagSell!=1)
+		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
@@ -98,21 +90,13 @@ public class ForexController {
 	public String createLimitOrder(@RequestBody Order userOrder)throws NoSuchAlgorithmException{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
-		int flagBuy=0;
-		int flagSell=0;
-		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
-				flagBuy=1;
-			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
-				flagSell=1;
-		}
 		if(!(userOrder.getOrderType().equalsIgnoreCase("limit"))){
 			return "ERROR: OrderType should only be Limit";
 		}
-		else if(flagBuy!=1)
+		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
-		else if(flagSell!=1)
+		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
