@@ -13,7 +13,7 @@ CREATE TABLE users(
 
 CREATE TABLE orderList(
 	orderId int NOT NULL AUTO_INCREMENT,
-	orderNumber varchar(32),
+	orderNumber varchar(33),
 	orderType varchar(10) NOT NULL,
 	currencyBuy varchar(3) NOT NULL,
 	currencySell varchar(3) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE orderAudit(
 	executedTime timestamp,
 	userid varchar (255) NOT NULL,
 	modifiedTime timestamp NOT NULL,
-	orderNumber varchar(32),
+	orderNumber varchar(33),
 	PRIMARY KEY (recordId)
 );
 
@@ -64,6 +64,3 @@ CREATE TABLE historicalAudit(
 	processingTime double,
 	PRIMARY KEY (historicalAuditId)
 ); 
-
-
-

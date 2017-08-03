@@ -43,6 +43,22 @@ public class Order {
 		this.userId = userId;
 		this.orderNumber = orderNumber;
 	}
+	
+	public Order(Order order){
+		this.orderId = order.orderId;
+		this.orderType = order.orderType;
+		this.currencyBuy = order.currencyBuy;
+		this.currencySell = order.currencySell;
+		this.size = order.size;
+		this.preferredPrice = order.preferredPrice;
+		this.executedPrice = order.executedPrice;
+		this.status = order.status;
+		this.goodTillDate = order.goodTillDate;
+		this.submittedTime = order.submittedTime;
+		this.executedTime = order.executedTime;
+		this.userId = order.userId;
+		this.orderNumber = order.orderNumber;
+	}
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;

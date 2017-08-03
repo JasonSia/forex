@@ -33,6 +33,9 @@ public class ForexMatchingService {
 				Order buyOrder = orders[0];
 				Order sellOrder = orders[1];
 				
+				Order buyOrderAudit = new Order(buyOrder);
+				Order sellOrderAudit = new Order(sellOrder);
+				
 				//process orders
 				if(buyOrder.getSize() == sellOrder.getSize()){
 					//set executed price
@@ -52,8 +55,8 @@ public class ForexMatchingService {
 					limitOrderRepository.updateLimitOrder(buyOrder);
 					limitOrderRepository.updateLimitOrder(sellOrder);
 					
-					orderAuditRepository.createOrderAudit(buyOrder, ts);
-					orderAuditRepository.createOrderAudit(sellOrder, ts);
+					orderAuditRepository.createOrderAudit(buyOrderAudit, ts);
+					orderAuditRepository.createOrderAudit(sellOrderAudit, ts);
 				}else{
 					//create new split filled order
 					Order splitOrder = new Order();
@@ -87,11 +90,10 @@ public class ForexMatchingService {
 					//execute order
 					limitOrderRepository.updateLimitOrder(buyOrder);
 					limitOrderRepository.updateLimitOrder(sellOrder);
-					limitOrderRepository.PlaceLimitOrder(splitOrder);
+					limitOrderRepository.placeOrder(splitOrder);
 					
-					orderAuditRepository.createOrderAudit(buyOrder, ts);
-					orderAuditRepository.createOrderAudit(sellOrder, ts);
-					orderAuditRepository.createOrderAudit(splitOrder, ts);
+					orderAuditRepository.createOrderAudit(buyOrderAudit, ts);
+					orderAuditRepository.createOrderAudit(sellOrderAudit, ts);
 				}
 			}catch(EmptyResultDataAccessException e){
 				isRun = false;
