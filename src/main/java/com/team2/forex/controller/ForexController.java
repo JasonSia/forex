@@ -124,14 +124,13 @@ public class ForexController {
 			System.out.println("orderId captured from user: "+orderNumber);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			String userid = auth.getName();
-			String cancelResult=los.cancelLimitOrder(orderNumber);
+			String cancelResult=los.cancelLimitOrder(orderNumber, userid);
 			return cancelResult;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
-		
+		return null;		
 	}
 	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)

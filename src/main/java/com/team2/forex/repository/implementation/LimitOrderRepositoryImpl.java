@@ -57,16 +57,26 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
     @Override
 	@Transactional(readOnly=true)
 	public Order checkLimitOrderExists(String orderNumber) throws EmptyResultDataAccessException{
-    	System.out.println("inside checkLimitOrderExists in rep");
+    	System.out.println("inside checkLimitOrderExists in rep, ordernumber=" + orderNumber);
     	try{
-		return jdbcTemplate.queryForObject("SELECT preferredPrice FROM orderList "
-				+ "WHERE orderNumber = ?", 
+		return jdbcTemplate.queryForObject("SELECT orderId, status, userId FROM orderList "
+				+ "WHERE orderNumber = ? ORDER BY EXECUTEDTIME LIMIT 1", 
 				new Object[]{orderNumber}, 
 				new LimitOrderExistsRowMapper());
     	}catch(Exception e){
     		return null;
     	}
 	}
+    
+    
+    @Override
+    @Transactional
+    public String cancelOrder(int OrderId) {
+      System.out.println("start cancel order " + OrderId);
+      jdbcTemplate.update("UPDATE ORDERLIST SET status = 'CANCELLED' WHERE OrderId = ?", 
+    		  	OrderId);
+      return "SUCCESSFUL: The order has been cancelled.";
+    }
 
 	@Override
 	public Order getOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size,
@@ -122,8 +132,12 @@ class LimitOrderExistsRowMapper implements RowMapper<Order>{
 	public Order mapRow(ResultSet rs, int i) throws SQLException {
 		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
 		Order order=new Order();
-		order.setPreferredPrice(rs.getInt("preferredPrice"));
-		System.out.println("Limit order preferredPrice is: "+order.getPreferredPrice());
+		order.setStatus(Status.valueOf(rs.getString("status")));
+		order.setUserId(rs.getString("userId"));
+		order.setOrderId(rs.getInt("OrderId"));
+		System.out.println("Limit order Status is: "+order.getStatus());
+		System.out.println("Limit order User is: "+order.getUserId());
+		System.out.println("Limit order ID is: "+order.getOrderId());
 		return order;
 	}
 }
