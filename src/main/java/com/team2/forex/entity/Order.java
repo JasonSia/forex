@@ -98,6 +98,9 @@ public class Order {
 	public void setGoodTillDate(String goodTillDateInput)throws ParseException {
 		this.goodTillDate = DateTimeUtil.stringToTimestamp(goodTillDateInput);
 	}
+	public void setGoodTillDate(Timestamp goodTillDate) {
+		this.goodTillDate = goodTillDate;
+	}
 	public Timestamp getSubmittedTime() {
 		return submittedTime;
 	}
