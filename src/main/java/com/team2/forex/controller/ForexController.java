@@ -59,8 +59,8 @@ public class ForexController {
 			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
 				flagSell=1;
 		}
-		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "OrderType should only be Market or Limit";
+		if(!(userOrder.getOrderType().equalsIgnoreCase("market"))){
+			return "OrderType should only be Market";
 		}
 		else if(flagBuy!=1)
 		{   return "ERROR: Buy Currency not supported.";	
@@ -105,8 +105,8 @@ public class ForexController {
 			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
 				flagSell=1;
 		}
-		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "ERROR: OrderType should only be Market or Limit";
+		if(!(userOrder.getOrderType().equalsIgnoreCase("limit"))){
+			return "ERROR: OrderType should only be Limit";
 		}
 		else if(flagBuy!=1)
 		{   return "ERROR: Buy Currency not supported.";	
