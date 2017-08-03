@@ -85,7 +85,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 
 	@Override
 	@Transactional(readOnly=true)
-	public Order[] matchLimitOrder() {
+	public Order[] matchLimitOrder() throws EmptyResultDataAccessException{
 		String sql = "SELECT * FROM orderList as limitA "
 				+ "INNER JOIN orderList AS limitB "
 				+ "ON limitA.currencyBuy = limitB.currencySell AND limitA.currencySell = limitB.currencyBuy "
@@ -106,11 +106,30 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 	}
 
 	@Override
-	public List<Order> getAllLimitOrder() {
-		String sql = "select orderId, currencyBuy, currencySell, executedPrice, "
+	@Transactional(readOnly=true)
+	public List<Order> getAllOpenLimitOrder() {
+		String sql = "SELECT orderId, currencyBuy, currencySell, executedPrice, "
 				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
-				+ "from orderList where orderType = 'limit'";
+				+ "FROM orderList WHERE orderType = 'limit' "
+				+ "AND (status = 'UNFILLED' OR status = 'PARTIALLYFILLED')";
 		return jdbcTemplate.query(sql, new LimitOrderRowMapper());
+	}
+
+	@Override
+	@Transactional
+	public void updateLimitOrder(Order order) {
+		jdbcTemplate.update("UPDATE ORDERLIST SET executedPrice = ?, status = ?, executedTime = ?, size = ? WHERE OrderId = ?", 
+    		  	new Object[]{order.getExecutedPrice(), order.getStatus().name(), order.getExecutedTime(), order.getSize(), order.getOrderId()});
+	}
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Order> getAllLimitOrderBeforeCurrentTime() {
+		String sql = "SELECT orderId, currencyBuy, currencySell, executedPrice, "
+				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
+				+ "FROM orderList WHERE orderType = 'limit' AND goodTillDate < ? "
+				+ "AND (status = 'UNFILLED' OR status = 'PARTIALLYFILLED')";
+		return jdbcTemplate.query(sql, new Object[]{new Timestamp(new Date().getTime())}, new LimitOrderRowMapper());
 	}
 }
 

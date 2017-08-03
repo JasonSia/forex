@@ -14,6 +14,8 @@ public interface LimitOrderRepository{
 			double preferredprice, Timestamp goodTillDate, Timestamp submittedTime,  String userId) throws EmptyResultDataAccessException;
 	public Order checkLimitOrderExists(String orderNumber);
 	public String cancelOrder(int orderId);
-	public Order[] matchLimitOrder();
-	public List<Order> getAllLimitOrder();
+	public Order[] matchLimitOrder() throws EmptyResultDataAccessException;
+	public List<Order> getAllOpenLimitOrder();
+	public void updateLimitOrder(Order order);
+	public List<Order> getAllLimitOrderBeforeCurrentTime();
 }
