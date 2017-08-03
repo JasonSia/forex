@@ -1,9 +1,8 @@
-/*package com.team2.forex.repository.implementation;
+package com.team2.forex.repository.implementation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,24 +32,21 @@ public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepositor
 						Order openOrder = new Order(
 								rs.getInt("orderId"),
 								rs.getString("orderType"),
-								rs.getString("currencyBuy"),
-								rs.getString("currencySell"),
-								rs.getDouble("size"),
+								Currency.valueOf(rs.getString("currencyBuy")),
+								Currency.valueOf(rs.getString("currencySell")),
+								rs.getInt("size"),
 								rs.getDouble("preferredPrice"),
 								rs.getDouble("executedPrice"),
-								rs.getString("status"),
+								Status.valueOf(rs.getString("status")),
 								rs.getTimestamp("goodTillDate"),
 								rs.getTimestamp("submittedTime"),
 								rs.getTimestamp("executedTime"),
-								rs.getString("userId"));
+								rs.getString("userId"),
+								rs.getString("orderNumber"));
 						return openOrder;
-					}					
-				}
-		
-		
-		);//end query				
+					}							
+				} //end rowmapper
+			);//end query		
+	
 	}//close getopenOrdersMethod
-	
-	
 }//end class
-*/
