@@ -45,6 +45,9 @@ public class ForexController {
 	@Autowired
 	private ForexDataReaderService fdrs;
 	
+	@Autowired
+	private ForexMatchingService matchingService;
+	
 	private static final Logger LOGGER = Logger.getLogger( ForexController.class.getName() );
 
 	
@@ -175,6 +178,7 @@ public class ForexController {
 	
 	@RequestMapping("/helloworld")
 	public String helloWorld(){
+		matchingService.processLimitOrderMatching();
 		return "helloworld";
 	}
 	
