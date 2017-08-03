@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
-import com.team2.forex.repository.TradersOpenOrderRepository;
+import com.team2.forex.repository.TradersOrderRepository;
 
 @Repository
-public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepository{
+public class TradersOrderRepositoryImpl implements TradersOrderRepository{
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;

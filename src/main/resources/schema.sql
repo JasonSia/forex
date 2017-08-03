@@ -30,19 +30,20 @@ CREATE TABLE orderList(
 
 CREATE TABLE orderAudit(
 	recordId int NOT NULL AUTO_INCREMENT,
-	orderId int NOT NULL AUTO_INCREMENT,
+	orderId int NOT NULL,
 	orderType varchar (10) NOT NULL,
 	currencyBuy varchar(3) NOT NULL,
 	currencySell varchar(3) NOT NULL,
 	size int NOT NULL,
 	preferredPrice double,
-	executedPrice double NOT NULL,
+	executedPrice double,
 	status varchar (10) NOT NULL,
-	goodTillDate timestamp NOT NULL,
+	goodTillDate timestamp,
 	submittedTime timestamp NOT NULL, 
-	executedTime timestamp NOT NULL,
+	executedTime timestamp,
 	userid varchar (255) NOT NULL,
 	modifiedTime timestamp NOT NULL,
+	orderNumber varchar(32),
 	PRIMARY KEY (recordId)
 );
 

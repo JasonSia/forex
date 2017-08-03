@@ -44,13 +44,14 @@ public class MarketOrderRepositoryImpl implements MarketOrderRepository{
         System.out.println("Order returned ID: "+orderReturned.getOrderId());
         System.out.println("Order returned size: "+orderReturned.getSize());
         System.out.println("Order returned order number:  "+orderReturned.getOrderNumber());
+        
         return orderReturned;
     }
     
     @Override
 	@Transactional(readOnly=true)
 	public Order getOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId, String orderNumber) throws EmptyResultDataAccessException{
-		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber FROM orderList "
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber, orderType, preferredPrice, status, goodTillDate, userId FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
 				+ "size = ? AND submittedTime = ? AND userId = ? AND orderNumber = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
@@ -72,6 +73,11 @@ class OrderRowMapper implements RowMapper<Order>{
 		order.setExecutedTime(rs.getTimestamp("executedTime"));
 		order.setSize(rs.getInt("size"));
 		order.setOrderNumber(rs.getString("orderNumber"));
+		order.setOrderType(rs.getString("orderType"));
+		order.setPreferredPrice(rs.getDouble("preferredPrice"));
+		order.setStatus(Status.valueOf(rs.getString("status")));
+		order.setGoodTillDate(rs.getTimestamp("goodTillDate"));
+		order.setUserId(rs.getString("userId"));
 		System.out.println("order id received in order row mapper is: "+order.getOrderId());
 		return order;
 	}
