@@ -13,6 +13,7 @@ CREATE TABLE users(
 
 CREATE TABLE orderList(
 	orderId int NOT NULL AUTO_INCREMENT,
+	orderNumber varchar(32),
 	orderType varchar(10) NOT NULL,
 	currencyBuy varchar(3) NOT NULL,
 	currencySell varchar(3) NOT NULL,
@@ -58,6 +59,7 @@ CREATE TABLE historical(
 CREATE TABLE historicalAudit(
 	historicalAuditId int NOT NULL AUTO_INCREMENT,
 	filename varchar(255) NOT NULL, 
+	fileRowNum int NOT NULL,
 	processingTime double,
 	PRIMARY KEY (historicalAuditId)
 ); 

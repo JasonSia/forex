@@ -1,5 +1,6 @@
 package com.team2.forex.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.team2.forex.service.*;
+import com.team2.forex.util.OrderUtil;
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.entity.Order;
@@ -49,24 +52,16 @@ public class ForexController {
 
 	
 	@RequestMapping(value="/placeMarketOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String createMarketOrder(@RequestBody Order userOrder){
+	public String createMarketOrder(@RequestBody Order userOrder)throws NoSuchAlgorithmException{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
-		int flagBuy=0;
-		int flagSell=0;
-		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
-				flagBuy=1;
-			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
-				flagSell=1;
+		if(!(userOrder.getOrderType().equalsIgnoreCase("market"))){
+			return "OrderType should only be Market";
 		}
-		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "OrderType should only be Market or Limit";
-		}
-		else if(flagBuy!=1)
+		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
-		else if(flagSell!=1)
+		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
@@ -74,11 +69,13 @@ public class ForexController {
 		userOrder.setStatus(Status.NOTFILLED);
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
 		userOrder.setUserId(userid);
+		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
 		//userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		Order completedOrder=mos.placeMarketOrder(userOrder);
 		if(completedOrder!=null){
 			String toPrint="Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+						   "Your order's order number is: "+completedOrder.getOrderNumber()+"\n"+
 						   "The executed price is: "+completedOrder.getExecutedPrice()+"\n"+
 						   "The size is: "+completedOrder.getSize()+"\n"+
 						   "Total payment is: "+(completedOrder.getExecutedPrice()*completedOrder.getSize())+"\n"+
@@ -93,24 +90,16 @@ public class ForexController {
 	
 	
 	@RequestMapping(value="/placeLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String createLimitOrder(@RequestBody Order userOrder){
+	public String createLimitOrder(@RequestBody Order userOrder)throws NoSuchAlgorithmException{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
-		int flagBuy=0;
-		int flagSell=0;
-		for(Currency c: Currency.values()){
-			if(userOrder.getCurrencyBuy().name().equalsIgnoreCase(c.name()))
-				flagBuy=1;
-			if(userOrder.getCurrencySell().name().equalsIgnoreCase(c.name()))
-				flagSell=1;
+		if(!(userOrder.getOrderType().equalsIgnoreCase("limit"))){
+			return "ERROR: OrderType should only be Limit";
 		}
-		if(!(userOrder.getOrderType().equalsIgnoreCase("market") || userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "ERROR: OrderType should only be Market or Limit";
-		}
-		else if(flagBuy!=1)
+		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
-		else if(flagSell!=1)
+		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
 		}
 		else
@@ -120,11 +109,36 @@ public class ForexController {
 		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
 		//userOrder.setCurrencySell(Currency.valueOf(userOrder.getCurrencySellInput()));
 		userOrder.setUserId(userid);
+		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setPreferredPrice(userid);
-		return "SUCCESSFUL: Your limit order is placed and the unique ID is: "+los.placeLimitOrder(userOrder);
+		Order completedOrder=los.placeLimitOrder(userOrder);
+		String toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+				       "Your order's order number is: "+completedOrder.getOrderNumber()+"\n";
+		return toPrint;
 		}
 	}
 	
+<<<<<<< HEAD
+=======
+	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public String cancelLimitOrder(@RequestBody String orderJson){
+		JSONObject obj;
+		try {
+			obj = new JSONObject(orderJson);
+			String orderNumber = obj.getString("orderNumber");
+			System.out.println("orderId captured from user: "+orderNumber);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			String userid = auth.getName();
+			String cancelResult=los.cancelLimitOrder(orderNumber, userid);
+			return cancelResult;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;		
+	}
+	
+>>>>>>> branch 'master' of https://github.com/JasonSia/forex.git
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
 	public String importFile(){
 		try {

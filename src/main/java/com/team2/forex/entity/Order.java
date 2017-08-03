@@ -19,38 +19,36 @@ public class Order {
 	private Timestamp submittedTime; 
 	private Timestamp executedTime;
 	private String userId;
-	//private String currencyBuyInput;
-	//private String currencySellInput;
 	private String orderNumber;
 	
-	/*public String getCurrencyBuyInput() {
-		return currencyBuyInput;
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+	
+	public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size,
+			double preferredPrice, double executedPrice, Status status, Timestamp goodTillDate, Timestamp submittedTime,
+			Timestamp executedTime, String userId, String orderNumber) {
+		
+		this.orderId = orderId;
+		this.orderType = orderType;
+		this.currencyBuy = currencyBuy;
+		this.currencySell = currencySell;
+		this.size = size;
+		this.preferredPrice = preferredPrice;
+		this.executedPrice = executedPrice;
+		this.status = status;
+		this.goodTillDate = goodTillDate;
+		this.submittedTime = submittedTime;
+		this.executedTime = executedTime;
+		this.userId = userId;
+		this.orderNumber = orderNumber;
 	}
 
-	public void setCurrencyBuyInput(String currencyBuyInput) {
-		this.currencyBuyInput = currencyBuyInput;
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
-
-	public String getCurrencySellInput() {
-		return currencySellInput;
-	}
-
-	public void setCurrencySellInput(String currencySellInput) {
-		this.currencySellInput = currencySellInput;
-	}*/
 
 	public Order(){}
-	
-	//initialising a new market order object here -- edit: not req since POSTMAN POST creates object directly
-	/*public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size, Timestamp submittedTime, String userId){
-		this.orderId=orderId;
-		this.orderType=orderType;
-		this.currencyBuy=currencyBuy;
-		this.currencySell=currencySell;
-		this.size=size;
-		this.submittedTime=submittedTime;
-		this.userId=userId;
-	}*/
 	
 	public int getOrderId() {
 		return orderId;
@@ -68,27 +66,32 @@ public class Order {
 		return currencyBuy;
 	}
 	public void setCurrencyBuy(String currencyBuyInput) {
-		this.currencyBuy = Currency.valueOf(currencyBuyInput);
+		int flag=0;
+		for(Currency c: Currency.values()){
+			if(currencyBuyInput.equalsIgnoreCase(c.name())){
+				flag=1;
+			}
+		}
+		if(flag==1)
+		  this.currencyBuy = Currency.valueOf(currencyBuyInput);
+		else
+		  this.currencyBuy=null;
 	}
 	public Currency getCurrencySell() {
 		return currencySell;
 	}
 	public void setCurrencySell(String currencySellInput) {
-		this.currencySell = Currency.valueOf(currencySellInput);
+		int flag=0;
+		for(Currency c: Currency.values()){
+			if(currencySellInput.equalsIgnoreCase(c.name())){
+				flag=1;
+			}
+		}
+		if(flag==1)
+		  this.currencySell = Currency.valueOf(currencySellInput);
+		else
+		  this.currencySell=null;
 	}
-	
-	/*public String getCurrencyBuy() {
-		return currencyBuy;
-	}
-	public void setCurrencyBuy(String currencyBuy) {
-		this.currencyBuy = currencyBuy;
-	}
-	public String getCurrencySell() {
-		return currencySell;
-	}
-	public void setCurrencySell(String currencySell) {
-		this.currencySell = currencySell;
-	}*/
 	public int getSize() {
 		return size;
 	}
@@ -118,6 +121,9 @@ public class Order {
 	}
 	public void setGoodTillDate(String goodTillDateInput)throws ParseException {
 		this.goodTillDate = DateTimeUtil.stringToTimestamp(goodTillDateInput);
+	}
+	public void setGoodTillDate(Timestamp goodTillDate) {
+		this.goodTillDate = goodTillDate;
 	}
 	public Timestamp getSubmittedTime() {
 		return submittedTime;
