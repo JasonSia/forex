@@ -15,10 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.team2.forex.entity.Currency;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
-import com.team2.forex.repository.TradersOpenOrderRepository;
+import com.team2.forex.repository.TradersOrderRepository;
 
 @Repository
-public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepository{
+public class TradersOrderRepositoryImpl implements TradersOrderRepository{
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -44,6 +44,33 @@ public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepositor
 								rs.getString("userId"),
 								rs.getString("orderNumber"));
 						return openOrder;
+					}							
+				} //end rowmapper
+			);//end query		
+	
+	}//close getopenOrdersMethod
+
+	@Override
+	@Transactional(readOnly=true)
+	public List<Order> getClosedOrders() throws EmptyResultDataAccessException {
+		return jdbcTemplate.query("select * from orderList where orderType='limit'and (status='FILLED' or status='CANCELLED' or status='EXPIRED')",
+				new RowMapper <Order>() {
+					@Override public Order mapRow(ResultSet rs, int rowNum) throws SQLException {	
+						Order closedOrder = new Order(
+								rs.getInt("orderId"),
+								rs.getString("orderType"),
+								Currency.valueOf(rs.getString("currencyBuy")),
+								Currency.valueOf(rs.getString("currencySell")),
+								rs.getInt("size"),
+								rs.getDouble("preferredPrice"),
+								rs.getDouble("executedPrice"),
+								Status.valueOf(rs.getString("status")),
+								rs.getTimestamp("goodTillDate"),
+								rs.getTimestamp("submittedTime"),
+								rs.getTimestamp("executedTime"),
+								rs.getString("userId"),
+								rs.getString("orderNumber"));
+						return closedOrder;
 					}							
 				} //end rowmapper
 			);//end query		

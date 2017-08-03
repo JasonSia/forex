@@ -6,16 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.team2.forex.entity.Order;
-import com.team2.forex.repository.TradersOpenOrderRepository;
+import com.team2.forex.repository.TradersOrderRepository;
 
 @Component
 public class OrderService {
 
 	@Autowired
-	TradersOpenOrderRepository openOrderRp;
+	TradersOrderRepository orderRp;
 	
 	public List<Order> getOpenOrder(){
-		return openOrderRp.getOpenOrders();
+		return orderRp.getOpenOrders();
+	}
+	
+	public List<Order> getClosedOrder(){
+		return orderRp.getClosedOrders();
 	}
 	
 	

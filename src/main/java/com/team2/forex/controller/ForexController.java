@@ -193,14 +193,21 @@ public class ForexController {
 		matchingService.processLimitOrderMatching();
 		return "helloworld";
 	}
+	
 	@RequestMapping("/runLimitOrderMatching")
 	public void runLimitOrderMatching(){
 		matchingService.processLimitOrderMatching();
 		matchingService.cleanUpLimitOrder();
 	}
+	
 	@RequestMapping("/getOpenOrder")
 	public List<Order> openOrder(){
 		return orderService.getOpenOrder();
+	}
+	
+	@RequestMapping("/getClosedOrder")
+	public List<Order> closedOrder(){
+		return orderService.getClosedOrder();
 	}
 	
 }
