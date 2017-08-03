@@ -24,6 +24,25 @@ public class Order {
 	public String getOrderNumber() {
 		return orderNumber;
 	}
+	
+	public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size,
+			double preferredPrice, double executedPrice, Status status, Timestamp goodTillDate, Timestamp submittedTime,
+			Timestamp executedTime, String userId, String orderNumber) {
+		
+		this.orderId = orderId;
+		this.orderType = orderType;
+		this.currencyBuy = currencyBuy;
+		this.currencySell = currencySell;
+		this.size = size;
+		this.preferredPrice = preferredPrice;
+		this.executedPrice = executedPrice;
+		this.status = status;
+		this.goodTillDate = goodTillDate;
+		this.submittedTime = submittedTime;
+		this.executedTime = executedTime;
+		this.userId = userId;
+		this.orderNumber = orderNumber;
+	}
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
