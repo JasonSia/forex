@@ -54,12 +54,12 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
     
     @Override
 	@Transactional(readOnly=true)
-	public Order checkLimitOrderExists(int orderId) throws EmptyResultDataAccessException{
+	public Order checkLimitOrderExists(String orderNumber) throws EmptyResultDataAccessException{
     	System.out.println("inside checkLimitOrderExists in rep");
     	try{
 		return jdbcTemplate.queryForObject("SELECT preferredPrice FROM orderList "
-				+ "WHERE orderId = ?", 
-				new Object[]{orderId}, 
+				+ "WHERE orderNumber = ?", 
+				new Object[]{orderNumber}, 
 				new LimitOrderExistsRowMapper());
     	}catch(Exception e){
     		return null;

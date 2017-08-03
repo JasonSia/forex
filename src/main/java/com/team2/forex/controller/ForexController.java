@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -131,12 +132,22 @@ public class ForexController {
 	}
 	
 	@RequestMapping(value="/cancelLimitOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
-	public String cancelLimitOrder(@RequestBody int orderId){
-		System.out.println("orderId captured from user: "+orderId);
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String userid = auth.getName();
-		String cancelResult=los.cancelLimitOrder(orderId);
-		return cancelResult;
+	public String cancelLimitOrder(@RequestBody String orderJson){
+		JSONObject obj;
+		try {
+			obj = new JSONObject(orderJson);
+			String orderNumber = obj.getString("orderNumber");
+			System.out.println("orderId captured from user: "+orderNumber);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			String userid = auth.getName();
+			String cancelResult=los.cancelLimitOrder(orderNumber);
+			return cancelResult;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 	
 	@RequestMapping(value="/importDatafile", method=RequestMethod.GET)
