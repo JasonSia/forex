@@ -20,7 +20,7 @@ CREATE TABLE orderList(
 	size int NOT NULL,
 	preferredPrice double,
 	executedPrice double,
-	status varchar (20) NOT NULL,
+	status varchar (10) NOT NULL,
 	goodTillDate timestamp,
 	submittedTime timestamp NOT NULL, 
 	executedTime timestamp,
@@ -31,19 +31,19 @@ CREATE TABLE orderList(
 CREATE TABLE orderAudit(
 	recordId int NOT NULL AUTO_INCREMENT,
 	orderId int NOT NULL,
+	orderNumber varchar(32),
 	orderType varchar (10) NOT NULL,
 	currencyBuy varchar(3) NOT NULL,
 	currencySell varchar(3) NOT NULL,
 	size int NOT NULL,
 	preferredPrice double,
-	executedPrice double,
+	executedPrice double NOT NULL,
 	status varchar (10) NOT NULL,
-	goodTillDate timestamp,
+	goodTillDate timestamp NOT NULL,
 	submittedTime timestamp NOT NULL, 
-	executedTime timestamp,
+	executedTime timestamp NOT NULL,
 	userid varchar (255) NOT NULL,
 	modifiedTime timestamp NOT NULL,
-	orderNumber varchar(32),
 	PRIMARY KEY (recordId)
 );
 
@@ -64,6 +64,7 @@ CREATE TABLE historicalAudit(
 	processingTime double,
 	PRIMARY KEY (historicalAuditId)
 ); 
+
 
 
 
