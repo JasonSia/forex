@@ -1,4 +1,4 @@
-package com.team2.forex.repository.implementation;
+/*package com.team2.forex.repository.implementation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -46,14 +46,11 @@ public class TradersOpenOrderRepositoryImpl implements TradersOpenOrderRepositor
 						return openOrder;
 					}					
 				}
-		/*
-		 * public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size,
-			double preferredPrice, double executedPrice, Status status, Timestamp goodTillDate, Timestamp submittedTime,
-			Timestamp executedTime, String userId, String orderNumber) {
-		 * 
-		 */
-		 */
+		
 		
 		);//end query				
 	}//close getopenOrdersMethod
+	
+	
 }//end class
+*/
