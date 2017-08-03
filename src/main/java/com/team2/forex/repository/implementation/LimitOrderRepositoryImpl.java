@@ -32,19 +32,19 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 
     @Override
     @Transactional
-    public int PlaceLimitOrder(Order order) {
+    public Order PlaceLimitOrder(Order order) {
       System.out.println("PrePrice" + order.getPreferredPrice());
-      int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID) "
-      		+ "values (?,?,?,?,?,?,?,?,?,?,?)", 
+      int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID,ORDERNUMBER) "
+      		+ "values (?,?,?,?,?,?,?,?,?,?,?,?)", 
     		  	order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getPreferredPrice(), null, order.getStatus().name(), order.getGoodTillDate(), 
-    		  	order.getSubmittedTime(), null, order.getUserId());
-      return LimitgetOrderId(order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getPreferredPrice(), order.getGoodTillDate(), order.getSubmittedTime(), order.getUserId()).getOrderId();
+    		  	order.getSubmittedTime(), null, order.getUserId(), order.getOrderNumber());
+      return LimitgetOrder(order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getPreferredPrice(), order.getGoodTillDate(), order.getSubmittedTime(), order.getUserId());
     }
     
     @Override
 	@Transactional(readOnly=true)
-	public Order LimitgetOrderId(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp goodTillDate, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
-		return jdbcTemplate.queryForObject("SELECT orderId FROM orderList "
+	public Order LimitgetOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, double preferredprice, Timestamp goodTillDate, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
 				+ "size = ? AND preferredprice = ? AND goodTillDate = ? AND submittedTime = ? AND userId = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
@@ -80,6 +80,13 @@ class LimitOrderRowMapper implements RowMapper<Order>{
 	public Order mapRow(ResultSet rs, int i) throws SQLException {
 		Order order=new Order();
 		order.setOrderId(rs.getInt("orderId"));
+		order.setCurrencyBuy(rs.getString("currencyBuy"));
+		order.setCurrencySell(rs.getString("currencySell"));
+		order.setExecutedPrice(rs.getDouble("executedPrice"));
+		order.setSubmittedTime(rs.getTimestamp("submittedTime"));
+		order.setExecutedTime(rs.getTimestamp("executedTime"));
+		order.setSize(rs.getInt("size"));
+		order.setOrderNumber(rs.getString("orderNumber"));
 		System.out.println("Limit order id received in order row mapper is: "+order.getOrderId());
 		return order;
 	}

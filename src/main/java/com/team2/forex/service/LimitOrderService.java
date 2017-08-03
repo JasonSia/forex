@@ -11,7 +11,7 @@ public class LimitOrderService {
 	@Autowired
 	LimitOrderRepository limitOrderRp;
 	
-	public int placeLimitOrder(Order lmtOrder){
+	public Order placeLimitOrder(Order lmtOrder){
 		return limitOrderRp.PlaceLimitOrder(lmtOrder);
 		
 	}
@@ -19,7 +19,8 @@ public class LimitOrderService {
 	public String cancelLimitOrder(int orderId){
 		Order order=limitOrderRp.checkLimitOrderExists(orderId);
 		if(order!=null){
-		  System.out.println("in los: order found, preferredPrice: "+order.getPreferredPrice());
+		 // if(order.getStatus().equals(Status.))
+			System.out.println("in los: order found, preferredPrice: "+order.getPreferredPrice());
 	      return "success";
 		}
 		else

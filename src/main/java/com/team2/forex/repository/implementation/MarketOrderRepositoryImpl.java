@@ -36,24 +36,25 @@ public class MarketOrderRepositoryImpl implements MarketOrderRepository{
     public Order PlaceAndExecuteMarketOrder(Order order, double price) {
         order.setExecutedTime(new Timestamp(System.currentTimeMillis()));
         order.setStatus(Status.FILLED);
-    	int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID) "
-      		+ "values (?,?,?,?,?,?,?,?,?,?,?)", 
+    	int orderId=jdbcTemplate.update("insert into ORDERLIST(ORDERTYPE,CURRENCYBUY,CURRENCYSELL,SIZE,PREFERREDPRICE,EXECUTEDPRICE,STATUS,GOODTILLDATE,SUBMITTEDTIME,EXECUTEDTIME,USERID,ORDERNUMBER) "
+      		+ "values (?,?,?,?,?,?,?,?,?,?,?,?)", 
     		  	order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), null, price, order.getStatus().name(), null, 
-    		  	order.getSubmittedTime(), order.getExecutedTime(), order.getUserId());
-        Order orderReturned=getOrder(order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getSubmittedTime(), order.getUserId());
+    		  	order.getSubmittedTime(), order.getExecutedTime(), order.getUserId(), order.getOrderNumber());
+        Order orderReturned=getOrder(order.getOrderType(), order.getCurrencyBuy().name(), order.getCurrencySell().name(), order.getSize(), order.getSubmittedTime(), order.getUserId(), order.getOrderNumber());
         System.out.println("Order returned ID: "+orderReturned.getOrderId());
         System.out.println("Order returned size: "+orderReturned.getSize());
+        System.out.println("Order returned order number:  "+orderReturned.getOrderNumber());
         return orderReturned;
     }
     
     @Override
 	@Transactional(readOnly=true)
-	public Order getOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId) throws EmptyResultDataAccessException{
-		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size FROM orderList "
+	public Order getOrder(String orderType, String currencyBuyInput, String currencySellInput, int size, Timestamp submittedTime, String userId, String orderNumber) throws EmptyResultDataAccessException{
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber FROM orderList "
 				+ "WHERE orderType = ? AND currencyBuy = ? AND currencySell = ? AND "
-				+ "size = ? AND submittedTime = ? AND userId = ? "
+				+ "size = ? AND submittedTime = ? AND userId = ? AND orderNumber = ? "
 				+ "ORDER BY submittedTime DESC LIMIT 1", 
-				new Object[]{orderType, currencyBuyInput, currencySellInput, size, submittedTime, userId}, 
+				new Object[]{orderType, currencyBuyInput, currencySellInput, size, submittedTime, userId, orderNumber}, 
 				new OrderRowMapper());
 	}
 }
@@ -70,6 +71,7 @@ class OrderRowMapper implements RowMapper<Order>{
 		order.setSubmittedTime(rs.getTimestamp("submittedTime"));
 		order.setExecutedTime(rs.getTimestamp("executedTime"));
 		order.setSize(rs.getInt("size"));
+		order.setOrderNumber(rs.getString("orderNumber"));
 		System.out.println("order id received in order row mapper is: "+order.getOrderId());
 		return order;
 	}

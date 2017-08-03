@@ -19,38 +19,17 @@ public class Order {
 	private Timestamp submittedTime; 
 	private Timestamp executedTime;
 	private String userId;
-	//private String currencyBuyInput;
-	//private String currencySellInput;
 	private String orderNumber;
 	
-	/*public String getCurrencyBuyInput() {
-		return currencyBuyInput;
+	public String getOrderNumber() {
+		return orderNumber;
 	}
 
-	public void setCurrencyBuyInput(String currencyBuyInput) {
-		this.currencyBuyInput = currencyBuyInput;
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
-
-	public String getCurrencySellInput() {
-		return currencySellInput;
-	}
-
-	public void setCurrencySellInput(String currencySellInput) {
-		this.currencySellInput = currencySellInput;
-	}*/
 
 	public Order(){}
-	
-	//initialising a new market order object here -- edit: not req since POSTMAN POST creates object directly
-	/*public Order(int orderId, String orderType, Currency currencyBuy, Currency currencySell, int size, Timestamp submittedTime, String userId){
-		this.orderId=orderId;
-		this.orderType=orderType;
-		this.currencyBuy=currencyBuy;
-		this.currencySell=currencySell;
-		this.size=size;
-		this.submittedTime=submittedTime;
-		this.userId=userId;
-	}*/
 	
 	public int getOrderId() {
 		return orderId;
