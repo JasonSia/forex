@@ -13,6 +13,8 @@ import java.util.List;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import io.restassured.RestAssured;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.DEFINED_PORT, classes = {ForexApplication.class})
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ForexMatchingTest {
 	@Autowired
 	private ForexMatchingService matchingService;
@@ -47,7 +50,7 @@ public class ForexMatchingTest {
 	}
 	
 	@Test
-	public void testMatchingAlgorithm(){
+	public void test1MatchingAlgorithm(){
 		Timestamp ts = new Timestamp(new Date().getTime());
 		Order[] order = limitOrderRepository.matchLimitOrder();
 		Order buyOrder = order[0];
@@ -79,10 +82,10 @@ public class ForexMatchingTest {
 	}
 	
 	@Test
-	public void testCleanUpLimitOrder(){
+	public void test2CleanUpLimitOrder(){
 		Timestamp ts = new Timestamp(new Date().getTime());
 		matchingService.cleanUpLimitOrder();
-		List<Order> limitOrderList = limitOrderRepository.getAllLimitOrder();
+		List<Order> limitOrderList = limitOrderRepository.getAllOpenLimitOrder();
 		
 		//check that all limit orders are later than current date after clean up
 		for(Order order: limitOrderList){
@@ -91,14 +94,14 @@ public class ForexMatchingTest {
 	}
 	
 	@Test
-	public void testMatchingService(){
+	public void test3MatchingService(){
 		given()
 		.auth().basic("client", "client")
 		.when().get("/runLimitOrderMatching")
 		.then().statusCode(HttpStatus.SC_OK);
 		
 		try{
-			Order[] order = limitOrderRepository.matchLimitOrder();
+			limitOrderRepository.matchLimitOrder();
 			Assert.fail("There should not be any matching limit order after running matching service");
 		}catch(EmptyResultDataAccessException e){
 			//continue to run
@@ -106,7 +109,7 @@ public class ForexMatchingTest {
 		
 		Timestamp ts = new Timestamp(new Date().getTime());
 		matchingService.cleanUpLimitOrder();
-		List<Order> limitOrderList = limitOrderRepository.getAllLimitOrder();
+		List<Order> limitOrderList = limitOrderRepository.getAllOpenLimitOrder();
 		
 		//check that all limit orders are later than current date after clean up
 		for(Order testOrder: limitOrderList){
