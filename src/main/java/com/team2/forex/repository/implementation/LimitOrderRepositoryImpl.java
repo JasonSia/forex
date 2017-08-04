@@ -1,7 +1,10 @@
 package com.team2.forex.repository.implementation;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +63,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 	public Order checkLimitOrderExists(String orderNumber) throws EmptyResultDataAccessException{
     	System.out.println("inside checkLimitOrderExists in rep, ordernumber=" + orderNumber);
     	try{
-		return jdbcTemplate.queryForObject("SELECT orderId, status, userId FROM orderList "
+		return jdbcTemplate.queryForObject("SELECT orderId, currencyBuy, currencySell, executedPrice, submittedTime, executedTime, size, orderNumber, orderType, preferredPrice, status, goodTillDate, userId FROM orderList "
 				+ "WHERE orderNumber = ? ORDER BY EXECUTEDTIME LIMIT 1", 
 				new Object[]{orderNumber}, 
 				new LimitOrderExistsRowMapper());
@@ -89,7 +95,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 		String sql = "SELECT * FROM orderList as limitA "
 				+ "INNER JOIN orderList AS limitB "
 				+ "ON limitA.currencyBuy = limitB.currencySell AND limitA.currencySell = limitB.currencyBuy "
-				+ "WHERE limitA.orderType = 'limit' AND limitB.orderType = 'limit' "
+				+ "WHERE limitA.orderType = 'LIMIT' AND limitB.orderType = 'LIMIT' "
 				+ "AND (limitA.status = 'NOTFILLED' OR limitA.status = 'PARTIALLYFILLED') "
 				+ "AND (limitB.status = 'NOTFILLED' OR limitB.status = 'PARTIALLYFILLED') "
 				+ "AND limitA.goodTillDate >= ? AND limitB.goodTillDate >= ? "
@@ -110,7 +116,7 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 	public List<Order> getAllOpenLimitOrder() {
 		String sql = "SELECT orderId, currencyBuy, currencySell, executedPrice, "
 				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
-				+ "FROM orderList WHERE orderType = 'limit' "
+				+ "FROM orderList WHERE orderType = 'LIMIT' "
 				+ "AND (status = 'UNFILLED' OR status = 'PARTIALLYFILLED')";
 		return jdbcTemplate.query(sql, new LimitOrderRowMapper());
 	}
@@ -127,9 +133,44 @@ public class LimitOrderRepositoryImpl implements LimitOrderRepository{
 	public List<Order> getAllLimitOrderBeforeCurrentTime() {
 		String sql = "SELECT orderId, currencyBuy, currencySell, executedPrice, "
 				+ "submittedTime, executedTime, size, orderNumber, goodTillDate "
-				+ "FROM orderList WHERE orderType = 'limit' AND goodTillDate < ? "
+				+ "FROM orderList WHERE orderType = 'LIMIT' AND goodTillDate < ? "
 				+ "AND (status = 'UNFILLED' OR status = 'PARTIALLYFILLED')";
 		return jdbcTemplate.query(sql, new Object[]{new Timestamp(new Date().getTime())}, new LimitOrderRowMapper());
+	}
+
+	@Override
+	@Transactional
+	public Order placeOrder(Order order) {
+		final String sql = "insert into orderlist(orderType, currencyBuy, currencySell, "
+				+ "size, preferredPrice,status, goodTillDate, submittedTime,userid, "
+				+ "orderNumber, EXECUTEDPRICE, EXECUTEDTIME) values (?,?,?,?,?,?,?,?,?,?,?,?)";
+		KeyHolder holder = new GeneratedKeyHolder();
+		
+		jdbcTemplate.update(new PreparedStatementCreator(){
+			
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException{
+				
+				PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				ps.setString(1, order.getOrderType());
+				ps.setString(2, order.getCurrencyBuy().name());
+				ps.setString(3, order.getCurrencySell().name());
+				ps.setInt(4, order.getSize());
+				ps.setDouble(5, order.getPreferredPrice());
+				ps.setString(6, order.getStatus().name());
+				ps.setTimestamp(7, order.getGoodTillDate());
+				ps.setTimestamp(8, order.getSubmittedTime());
+				ps.setString(9, order.getUserId());
+				ps.setString(10, order.getOrderNumber());
+				ps.setDouble(11, order.getExecutedPrice());
+				ps.setTimestamp(12, order.getExecutedTime());
+				return ps;
+			}
+		}, holder);
+		
+		int newOrderId = holder.getKey().intValue();
+		order.setOrderId(newOrderId);
+		return order;
 	}
 }
 
@@ -158,6 +199,7 @@ class LimitOrderMatchingRowMapper implements RowMapper<Order[]>{
 	public Order[] mapRow(ResultSet rs, int i) throws SQLException {
 		Order orderA = new Order();
 		orderA.setOrderId(rs.getInt(1));
+		orderA.setOrderNumber(rs.getString(2));
 		orderA.setOrderType(rs.getString(3));
 		orderA.setCurrencyBuy(rs.getString(4));
 		orderA.setCurrencySell(rs.getString(5));
@@ -172,6 +214,7 @@ class LimitOrderMatchingRowMapper implements RowMapper<Order[]>{
 		
 		Order orderB = new Order();
 		orderB.setOrderId(rs.getInt(14));
+		orderB.setOrderNumber(rs.getString(15));
 		orderB.setOrderType(rs.getString(16));
 		orderB.setCurrencyBuy(rs.getString(17));
 		orderB.setCurrencySell(rs.getString(18));
@@ -193,9 +236,19 @@ class LimitOrderExistsRowMapper implements RowMapper<Order>{
 	public Order mapRow(ResultSet rs, int i) throws SQLException {
 		System.out.println("inside checkLimitOrderExistsRowMapper in rep");
 		Order order=new Order();
+		order.setOrderId(rs.getInt("orderId"));
+		order.setCurrencyBuy(rs.getString("currencyBuy"));
+		order.setCurrencySell(rs.getString("currencySell"));
+		order.setExecutedPrice(rs.getDouble("executedPrice"));
+		order.setSubmittedTime(rs.getTimestamp("submittedTime"));
+		order.setExecutedTime(rs.getTimestamp("executedTime"));
+		order.setSize(rs.getInt("size"));
+		order.setOrderNumber(rs.getString("orderNumber"));
+		order.setOrderType(rs.getString("orderType"));
+		order.setPreferredPrice(rs.getDouble("preferredPrice"));
 		order.setStatus(Status.valueOf(rs.getString("status")));
+		order.setGoodTillDate(rs.getTimestamp("goodTillDate"));
 		order.setUserId(rs.getString("userId"));
-		order.setOrderId(rs.getInt("OrderId"));
 		System.out.println("Limit order Status is: "+order.getStatus());
 		System.out.println("Limit order User is: "+order.getUserId());
 		System.out.println("Limit order ID is: "+order.getOrderId());

@@ -18,4 +18,5 @@ public interface LimitOrderRepository{
 	public List<Order> getAllOpenLimitOrder();
 	public void updateLimitOrder(Order order);
 	public List<Order> getAllLimitOrderBeforeCurrentTime();
+	public Order placeOrder(Order order);
 }

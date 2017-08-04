@@ -17,4 +17,5 @@ import com.team2.forex.repository.MarketOrderRepository;
 public interface OrderAuditRepository{
 	
 	public void createOrderAudit(Order order, Timestamp modifiedTime);
+	public void updateOrderAudit(Order order, Timestamp modifiedTime);
 }

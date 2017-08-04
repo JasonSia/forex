@@ -123,5 +123,51 @@ public class PlaceMarketOrderTests {
 
 		assertEquals("User input Sell Currency is not supported", "ERROR: Sell Currency not supported.", response.asString());
 	}
+	
+	@Test
+	public void CancelOrderCorrectly()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderNumber", "c81b59cb37dbe7d2607432877c12cac2");
+        
+		given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/cancelLimitOrder").then()
+        .statusCode(200);
+    }
+	
+	@Test
+	public void CancelOrderWithWrongOrderNumber()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderNumber", "abcdefg");
+        
+        Response response=given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/cancelLimitOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User cancel with wrong order number", "ERROR: The order number is incorret.", response.asString());
+	}
+	
+	@Test
+	public void CancelOrderWithWrongUser()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderNumber", "c81b59cb37dbe7d2607432877c12cac2");
+        
+        Response response=given()
+        .auth().basic("admin", "admin")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/cancelLimitOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User cancel with wrong user", "ERROR: The login ID mismatch with order owner, please try again.", response.asString());
+	}
+	
 }
 

@@ -17,7 +17,7 @@ public class OrderAuditService {
 	
 	//use only for successful trade i.e. Status changed to Filled
 	public void createOrderAudit(Order order, Timestamp modifiedTime){
-		orderAuditRp.createOrderAudit(order, modifiedTime);
+		
 	}
 	
 	//use only for cancelled trade i.e. Status changed to Cancelled
