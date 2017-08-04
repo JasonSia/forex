@@ -18,7 +18,7 @@ public class MovingAverageService {
 	private HistoricalTradeDataRepository histRepo;
 	
 	public String calc() {
-		String result = "Moving Average for the currency pair is as follows: "+"<br>";
+		String result = "Moving Average for the currency pair is as follows: "+"\n";
 		List<HistoricalTradeData> histData;
 		long DAY_IN_MS = 1000 * 60 * 60 * 24;
 		for(Currency c_sell: Currency.values()){
@@ -33,7 +33,7 @@ public class MovingAverageService {
 						}
 					}
 					avg/=10;
-					result += "Buy: " + c_buy.name() + " Sell: " + c_sell.name() + " ----- avg: "+avg+" <br> ";
+					result += "Buy: " + c_buy.name() + " Sell: " + c_sell.name() + " ----- avg: "+avg+" \n ";
 				}
 			}
 		}
