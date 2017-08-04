@@ -173,5 +173,26 @@ public class PlaceLimitOrderTests {
 
 		assertEquals("User input size is incorrect", "ERROR: The preferred price should be a positive value greater than 0.", response.asString());
 	}
+	
+	@Test
+	public void PlaceLimitOrderInputPreviousGoodTillDate()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderType", "LIMIT");
+        Order.put("currencyBuy", "HKD");
+        Order.put("currencySell", "USD");
+        Order.put("preferredPrice", 10);
+        Order.put("goodTillDate", "2017-07-30_23:04:13.0");
+        Order.put("size", 10);
+        
+        Response response=given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/placeLimitOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User input size is incorrect", "ERROR: The good till date should be of a later than current time.", response.asString());
+	}
 }
 

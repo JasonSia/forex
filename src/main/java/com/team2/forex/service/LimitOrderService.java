@@ -23,12 +23,7 @@ public class LimitOrderService {
 	HistoricalTradeDataRepository historicalTradeDataRp;
 	
 	public Order placeLimitOrder(Order lmtOrder){
-		if(historicalTradeDataRp.getLatestHistoricalTradeData(lmtOrder.getCurrencyBuy(), lmtOrder.getCurrencySell()).getLotSize()>lmtOrder.getSize()){
 		    return limitOrderRp.PlaceLimitOrder(lmtOrder);
-		}
-		else
-			return null;
-		
 	}
 	
 	public String cancelLimitOrder(String orderNumber, String loginUserId){

@@ -119,6 +119,9 @@ public class ForexController {
 		else if(userOrder.getPreferredPrice()<=0)
 		{   return "ERROR: The preferred price should be a positive value greater than 0.";	
 		}
+		else if(userOrder.getGoodTillDate().before(new Timestamp(System.currentTimeMillis())))
+		{   return "ERROR: The good till date should be of a later than current time.";	
+		}
 		else
 		{
 			String toPrint;
@@ -130,15 +133,11 @@ public class ForexController {
 		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setPreferredPrice(userid);
 		Order completedOrder=los.placeLimitOrder(userOrder);
-		if(completedOrder!=null){
 		//run matching service
 		matchingService.processLimitOrderMatching();
 		
 		toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
 				       "Your order's order number is: "+completedOrder.getOrderNumber()+"\n";
-		}
-		else
-			toPrint="Your input size is more than the lot size currently available, please try again.";
 		return toPrint;
 		}
 	}
