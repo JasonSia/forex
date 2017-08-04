@@ -38,7 +38,7 @@ public class OrderTest {
 		Timestamp tsStart = DateTimeUtil.stringToTimestamp("2017-08-10_23:04:15.000");
 		Timestamp tsEnd = DateTimeUtil.stringToTimestamp("2017-08-16_23:04:15.000");
 		List<Order> closedOrders = orderRp.getClosedOrders(tsStart,tsEnd);
-		assertEquals("There should only be 3 closed orders", 3, closedOrders.size());
+		assertEquals("There should only be 0 closed orders", 0, closedOrders.size());
 	}
 
 }
