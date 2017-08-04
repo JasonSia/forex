@@ -152,5 +152,26 @@ public class PlaceLimitOrderTests {
 
 		assertEquals("User input size is incorrect", "ERROR: The size should be a positive value greater than 0.", response.asString());
 	}
+	
+	@Test
+	public void PlaceLimitOrderInputWrongPreferredPrice()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderType", "LIMIT");
+        Order.put("currencyBuy", "HKD");
+        Order.put("currencySell", "USD");
+        Order.put("preferredPrice", 0);
+        Order.put("goodTillDate", "2020-07-30_23:04:13.0");
+        Order.put("size", 10);
+        
+        Response response=given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/placeLimitOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User input size is incorrect", "ERROR: The preferred price should be a positive value greater than 0.", response.asString());
+	}
 }
 

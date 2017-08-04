@@ -116,6 +116,9 @@ public class ForexController {
 		else if(userOrder.getSize()<=0)
 		{   return "ERROR: The size should be a positive value greater than 0.";	
 		}
+		else if(userOrder.getPreferredPrice()<=0)
+		{   return "ERROR: The preferred price should be a positive value greater than 0.";	
+		}
 		else
 		{
 		userOrder.setStatus(Status.NOTFILLED);
