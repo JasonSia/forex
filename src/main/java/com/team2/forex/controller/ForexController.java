@@ -121,6 +121,7 @@ public class ForexController {
 		}
 		else
 		{
+			String toPrint;
 		userOrder.setStatus(Status.NOTFILLED);
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
 		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
@@ -129,12 +130,15 @@ public class ForexController {
 		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setPreferredPrice(userid);
 		Order completedOrder=los.placeLimitOrder(userOrder);
-		
+		if(completedOrder!=null){
 		//run matching service
 		matchingService.processLimitOrderMatching();
 		
-		String toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+		toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
 				       "Your order's order number is: "+completedOrder.getOrderNumber()+"\n";
+		}
+		else
+			toPrint="Your input size is more than the lot size currently available, please try again.";
 		return toPrint;
 		}
 	}

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.team2.forex.entity.Order;
 import com.team2.forex.entity.Status;
+import com.team2.forex.repository.HistoricalTradeDataRepository;
 import com.team2.forex.repository.LimitOrderRepository;
 import com.team2.forex.repository.OrderAuditRepository;
 
@@ -18,8 +19,15 @@ public class LimitOrderService {
 	@Autowired
 	OrderAuditRepository orderAuditRp;
 	
+	@Autowired
+	HistoricalTradeDataRepository historicalTradeDataRp;
+	
 	public Order placeLimitOrder(Order lmtOrder){
-		return limitOrderRp.PlaceLimitOrder(lmtOrder);
+		if(historicalTradeDataRp.getLatestHistoricalTradeData(lmtOrder.getCurrencyBuy(), lmtOrder.getCurrencySell()).getLotSize()>lmtOrder.getSize()){
+		    return limitOrderRp.PlaceLimitOrder(lmtOrder);
+		}
+		else
+			return null;
 		
 	}
 	
