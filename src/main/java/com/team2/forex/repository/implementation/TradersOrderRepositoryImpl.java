@@ -2,9 +2,10 @@ package com.team2.forex.repository.implementation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import java.sql.Timestamp;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,8 +53,12 @@ public class TradersOrderRepositoryImpl implements TradersOrderRepository{
 
 	@Override
 	@Transactional(readOnly=true)
-	public List<Order> getClosedOrders() throws EmptyResultDataAccessException {
-		return jdbcTemplate.query("select * from orderList where orderType='limit'and (status='FILLED' or status='CANCELLED' or status='EXPIRED')",
+	public List<Order> getClosedOrders(Timestamp startDate, Timestamp endDate) throws EmptyResultDataAccessException {
+		System.out.println("Start Date is: "+ startDate);
+		System.out.println("End Date is:" + endDate);
+		return jdbcTemplate.query("select * from orderList where orderType='limit' and "
+				+ "(status='FILLED' or status='CANCELLED' or status='EXPIRED') and submittedTime>=? and submittedTime<=?",
+				new Object[] {startDate, endDate},
 				new RowMapper <Order>() {
 					@Override public Order mapRow(ResultSet rs, int rowNum) throws SQLException {	
 						Order closedOrder = new Order(
