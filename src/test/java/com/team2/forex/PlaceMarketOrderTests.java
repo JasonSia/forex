@@ -5,7 +5,9 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //import javax.xml.ws.Response;
@@ -24,7 +26,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.team2.forex.entity.Currency;
+import com.team2.forex.entity.HistoricalTradeData;
 import com.team2.forex.repository.MarketOrderRepository;
+import com.team2.forex.service.ForexStreamEmulationService;
 import com.team2.forex.service.MarketOrderService;
 
 import io.restassured.RestAssured;
@@ -41,6 +45,9 @@ public class PlaceMarketOrderTests {
 	@Autowired
 	private MarketOrderRepository MktOrderRepo;
 	
+	@Autowired
+	private ForexStreamEmulationService emulationService;
+	
 	
 	@Value("${local.server.port}")
 	private int serverPort;
@@ -52,7 +59,13 @@ public class PlaceMarketOrderTests {
 	
 	
 	@Test
-    public void PlaceMarketOrderSuccess() throws JSONException {
+    public void PlaceMarketOrderSuccess() throws JSONException, ParseException {
+		//generate historical trade data
+		String streamJson = emulationService.generateStreamJson();
+		List<HistoricalTradeData> historicalTradeDataList = emulationService.parseStreamJson(streamJson);
+		emulationService.saveHistoricalTradeData(historicalTradeDataList);
+		
+		//place market order
 		JSONObject Order = new JSONObject();
 		Order.put("orderType", "MARKET");
         Order.put("currencyBuy", "HKD");
@@ -156,7 +169,7 @@ public class PlaceMarketOrderTests {
 	@Test
 	public void CancelOrderWithWrongUser()throws JSONException{
 		JSONObject Order = new JSONObject();
-		Order.put("orderNumber", "c81b59cb37dbe7d2607432877c12cac2");
+		Order.put("orderNumber", "c81b587640dbe7d2607432877c234ac2");
         
         Response response=given()
         .auth().basic("admin", "admin")
