@@ -205,9 +205,9 @@ public class ForexController {
 		return orderService.getOpenOrder();
 	}
 	
-	@RequestMapping("/getClosedOrder")
-	public List<Order> closedOrder(){
-		return orderService.getClosedOrder();
+	@RequestMapping(value="/getClosedOrder", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public List<Order> closedOrder(@RequestBody String dateRange) throws ParseException, JSONException{
+		return orderService.getClosedOrder(dateRange);
 	}
 	
 }
