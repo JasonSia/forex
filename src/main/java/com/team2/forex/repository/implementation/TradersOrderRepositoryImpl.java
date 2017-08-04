@@ -27,7 +27,7 @@ public class TradersOrderRepositoryImpl implements TradersOrderRepository{
 	@Override
 	@Transactional(readOnly=true)
 	public List<Order> getOpenOrders() throws EmptyResultDataAccessException {
-		return jdbcTemplate.query("select * from orderList where orderType='limit'and (status='NOTFILLED' or status='PARTIALLYFILLED')",
+		return jdbcTemplate.query("select * from orderList where orderType='LIMIT' and (status='NOTFILLED' or status='PARTIALLYFILLED')",
 				new RowMapper <Order>() {
 					@Override public Order mapRow(ResultSet rs, int rowNum) throws SQLException {	
 						Order openOrder = new Order(
@@ -56,7 +56,7 @@ public class TradersOrderRepositoryImpl implements TradersOrderRepository{
 	public List<Order> getClosedOrders(Timestamp startDate, Timestamp endDate) throws EmptyResultDataAccessException {
 		System.out.println("Start Date is: "+ startDate);
 		System.out.println("End Date is:" + endDate);
-		return jdbcTemplate.query("select * from orderList where orderType='limit' and "
+		return jdbcTemplate.query("select * from orderList where orderType='LIMIT' and "
 				+ "(status='FILLED' or status='CANCELLED' or status='EXPIRED') and submittedTime>=? and submittedTime<=?",
 				new Object[] {startDate, endDate},
 				new RowMapper <Order>() {

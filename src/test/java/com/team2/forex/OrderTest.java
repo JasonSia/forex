@@ -16,7 +16,7 @@ import com.team2.forex.repository.TradersOrderRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ForexApplication.class})
-public class OpenOrderTest {
+public class OrderTest {
 	
 	
 	@Autowired
@@ -25,8 +25,8 @@ public class OpenOrderTest {
 	@Test
 	public void testCountOpenOrder(){
 		List<Order> openOrders = openOrder.getOpenOrders();
-		assertEquals("There should only be 4 open orders", 4, openOrders.size());
+		assertEquals("There should only be 5 open orders", 5, openOrders.size());
 		
 	}
 	
-}
+	
