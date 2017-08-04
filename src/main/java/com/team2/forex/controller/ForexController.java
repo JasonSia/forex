@@ -63,13 +63,17 @@ public class ForexController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
 		if(!(userOrder.getOrderType().equalsIgnoreCase("market"))){
-			return "OrderType should only be Market";
+			return "ERROR: OrderType should only be Market.";
 		}
 		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
 		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
+		}
+
+		else if(userOrder.getSize()<=0)
+		{   return "ERROR: The size should be a positive value greater than 0.";	
 		}
 		else
 		{
@@ -101,13 +105,16 @@ public class ForexController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
 		if(!(userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "ERROR: OrderType should only be Limit";
+			return "ERROR: OrderType should only be Limit.";
 		}
 		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
 		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
+		}
+		else if(userOrder.getSize()<=0)
+		{   return "ERROR: The size should be a positive value greater than 0.";	
 		}
 		else
 		{

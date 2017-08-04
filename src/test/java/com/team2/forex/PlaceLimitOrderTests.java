@@ -87,7 +87,7 @@ public class PlaceLimitOrderTests {
         .then().statusCode(HttpStatus.SC_OK)
         .and().extract().response();
 
-		assertEquals("User input Order Type is incorrect", "ERROR: OrderType should only be Limit", response.asString());
+		assertEquals("User input Order Type is incorrect", "ERROR: OrderType should only be Limit.", response.asString());
 	}
 	
 	@Test
@@ -130,6 +130,27 @@ public class PlaceLimitOrderTests {
         .and().extract().response();
 
 		assertEquals("User input Sell Currency is not supported", "ERROR: Sell Currency not supported.", response.asString());
+	}
+	
+	@Test
+	public void PlaceLimitOrderInputWrongSize()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderType", "LIMIT");
+        Order.put("currencyBuy", "HKD");
+        Order.put("currencySell", "USD");
+        Order.put("preferredPrice", 20.50);
+        Order.put("goodTillDate", "2020-07-30_23:04:13.0");
+        Order.put("size", 0);
+        
+        Response response=given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/placeLimitOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User input size is incorrect", "ERROR: The size should be a positive value greater than 0.", response.asString());
 	}
 }
 
