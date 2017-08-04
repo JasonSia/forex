@@ -63,13 +63,17 @@ public class ForexController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
 		if(!(userOrder.getOrderType().equalsIgnoreCase("market"))){
-			return "OrderType should only be Market";
+			return "ERROR: OrderType should only be Market.";
 		}
 		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
 		}
 		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
+		}
+
+		else if(userOrder.getSize()<=0)
+		{   return "ERROR: The size should be a positive value greater than 0.";	
 		}
 		else
 		{
@@ -101,7 +105,7 @@ public class ForexController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userid = auth.getName();
 		if(!(userOrder.getOrderType().equalsIgnoreCase("limit"))){
-			return "ERROR: OrderType should only be Limit";
+			return "ERROR: OrderType should only be Limit.";
 		}
 		else if(userOrder.getCurrencyBuy()==null)
 		{   return "ERROR: Buy Currency not supported.";	
@@ -109,8 +113,15 @@ public class ForexController {
 		else if(userOrder.getCurrencySell()==null)
 		{   return "ERROR: Sell Currency not supported.";	
 		}
+		else if(userOrder.getSize()<=0)
+		{   return "ERROR: The size should be a positive value greater than 0.";	
+		}
+		else if(userOrder.getPreferredPrice()<=0)
+		{   return "ERROR: The preferred price should be a positive value greater than 0.";	
+		}
 		else
 		{
+			String toPrint;
 		userOrder.setStatus(Status.NOTFILLED);
 		userOrder.setSubmittedTime(new Timestamp(System.currentTimeMillis()));
 		//userOrder.setCurrencyBuy(Currency.valueOf(userOrder.getCurrencyBuyInput()));
@@ -119,12 +130,15 @@ public class ForexController {
 		userOrder.setOrderNumber(OrderUtil.generateOrderNumber(userid));
 		//userOrder.setPreferredPrice(userid);
 		Order completedOrder=los.placeLimitOrder(userOrder);
-		
+		if(completedOrder!=null){
 		//run matching service
 		matchingService.processLimitOrderMatching();
 		
-		String toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
+		toPrint="Successful: Your limit order is placed, Your order's unique ID is: "+completedOrder.getOrderId()+"\n"+
 				       "Your order's order number is: "+completedOrder.getOrderNumber()+"\n";
+		}
+		else
+			toPrint="Your input size is more than the lot size currently available, please try again.";
 		return toPrint;
 		}
 	}

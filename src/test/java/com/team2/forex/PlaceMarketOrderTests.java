@@ -96,7 +96,7 @@ public class PlaceMarketOrderTests {
         .then().statusCode(HttpStatus.SC_OK)
         .and().extract().response();
 
-		assertEquals("User input Order Type is incorrect", "OrderType should only be Market", response.asString());
+		assertEquals("User input Order Type is incorrect", "ERROR: OrderType should only be Market.", response.asString());
 	}
 	
 	@Test
@@ -180,6 +180,25 @@ public class PlaceMarketOrderTests {
         .and().extract().response();
 
 		assertEquals("User cancel with wrong user", "ERROR: The login ID mismatch with order owner, please try again.", response.asString());
+	}
+	
+	@Test
+	public void PlaceMarketOrderInputWrongSize()throws JSONException{
+		JSONObject Order = new JSONObject();
+		Order.put("orderType", "MARKET");
+        Order.put("currencyBuy", "SGD");
+        Order.put("currencySell", "USD");
+        Order.put("size", 0);
+        
+        Response response=given()
+        .auth().basic("client", "client")
+        .contentType("application/json")
+        .body(Order.toString())
+        .when().post("/placeMarketOrder")
+        .then().statusCode(HttpStatus.SC_OK)
+        .and().extract().response();
+
+		assertEquals("User input size is incorrect", "ERROR: The size should be a positive value greater than 0.", response.asString());
 	}
 	
 }
